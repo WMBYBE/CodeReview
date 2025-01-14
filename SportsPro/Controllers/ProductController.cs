@@ -16,7 +16,7 @@ namespace SportsPro.Controllers
         }
         public IActionResult List()
         {
-            var products = context.Products.OrderBy(c => c.Name).ToList(); //Sends the lsit of forums to the index page so that you can see them all
+            var products = context.Products.OrderBy(c => c.ReleaseDate).ToList(); //Sends the lsit of forums to the index page so that you can see them all
 
             return View(products);
         }
