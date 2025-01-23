@@ -20,6 +20,9 @@ namespace SportsPro.Controllers
 
 
         [NonAction]
+
+        // in NET 3.0 you can't use  _context.ChangeTracker.Clear(); 
+        // so this is a solution that works with older verions
         public void ClearChangeTracker()
         {
             foreach (var entry in _context.ChangeTracker.Entries().ToList())
