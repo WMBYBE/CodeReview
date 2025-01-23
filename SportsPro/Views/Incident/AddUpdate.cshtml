@@ -14,11 +14,23 @@
 
     <div class="form-group">
         <label asp-for="Customer">Customer</label>
-        <input asp-for="Customer" class="form-control">
+        <select asp-for="Customer" class="form-control">
+            <option value="">Select a Customer</option>
+            @foreach (Customer f in ViewBag.Customer)
+            {
+                <option value="@f.CustomerID">@f.CustomerName</option>
+            }
+        </select>
     </div>
     <div class="form-group">
         <label asp-for="Product">Product</label>
-        <input asp-for="Product" class="form-control">
+        <select asp-for="Product" class="form-control">
+            <option value="">Select a Product</option>
+            @foreach (Product f in ViewBag.Products)
+            {
+                <option value="@f.ProductID">@f.ProductName</option>
+            }
+        </select>
     </div>
 
     <div class="form-group">
@@ -32,7 +44,13 @@
     </div>
     <div class="form-group">
         <label asp-for="Technician">Technician</label>
-        <input asp-for="Technician" class="form-control">
+        <select asp-for="Technician" class="form-control">
+            <option value="">Select a Forum to post in</option>
+            @foreach (Technician f in ViewBag.Technicians)
+            {
+                <option value="@f.TechnicianID">@f.TechnicianName</option>
+            }
+        </select>
     </div>
     <div class="form-group">
         <label asp-for="DateOpened">Date Opened</label>
