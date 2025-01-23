@@ -1,0 +1,29 @@
+﻿@model List<Incident>
+<table class="table table-bordered table-striped">
+    <tbody>
+        @foreach (var incident in Model)
+        {
+            <tr>
+                <td>
+                    @incident.Title
+                </td>
+                <td>
+                    @incident.Customer
+                </td>
+                <td>
+                    @incident.Product
+                </td>
+                <td>
+                    @incident.DateOpened
+                </td>
+                <td>
+                    <a asp-controller="Incident" asp-action="Update" asp-route-id="@incident.IncidentID" class="btn btn-primary">Edit</a>
+                </td>
+                <td>
+                    <a asp-controller="Incident" asp-action="Delete" asp-route-id="@incident.IncidentID" type="button" class="btn btn-primary">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-controller="Product" asp-action="Add" class="btn btn-primary">Add Incident</a>
