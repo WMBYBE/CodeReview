@@ -17,13 +17,13 @@
                     @product.ReleaseDate
                 </td>
                 <td>
-                    <a asp-controller="Product" asp-action="Edit" asp-route-id="@product.ProductID">Edit</a>
+                    <a asp-controller="Product" asp-action="Update" asp-route-id="@product.ProductID" class="btn btn-primary">Edit</a>
                 </td>
                 <td>
-                    <button asp-controller="Product" asp-action="List" type="button" class="btn btn-primary">Delete</button>
+                    <button asp-controller="Product" asp-action="Delete" type="button" class="btn btn-primary">Delete</button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-<a asp-controller="Product" asp-action="AddProduct">Add Product</a>
+<a asp-controller="Product" asp-action="Add" class="btn btn-primary">Add Product</a>

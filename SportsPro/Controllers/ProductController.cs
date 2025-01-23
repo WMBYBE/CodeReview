@@ -18,7 +18,9 @@ namespace SportsPro.Controllers
             var products = context.Products.OrderBy(c => c.ReleaseDate).ToList();
             return View(products);
         }
-        public IActionResult addProduct()
+
+        [HttpGet]
+        public IActionResult Add()
         {
             // create new Product object
             Product product = new Product();                
@@ -26,33 +28,52 @@ namespace SportsPro.Controllers
             ViewBag.Action = "Add";
 
             // bind product to AddUpdate view
-            return View("addProduct", product);
+            return View("AddUpdate", product);
         }
-
-        public IActionResult edit(int id)
+        [HttpGet]
+        public IActionResult Update(int id)
         {
             Product product = context.Products.FirstOrDefault(p => p.ProductID == id);
             ViewBag.Action = "Edit";
 
-            return View("addProduct", new Product());
+            return View("AddUpdate", product);
         }
         [HttpPost]
-        public IActionResult addProduct(Product product)
+        public IActionResult Update(Product product)
         {
             if (ModelState.IsValid)
             {
                 if (product.ProductID == 0)
+                {
                     context.Products.Add(product);
+                }
                 else
+                {
                     context.Products.Update(product);
+                }
                 context.SaveChanges();
-                return RedirectToAction("List", "Product");
+                return RedirectToAction("List");
             }
             else
             {
-                ViewBag.Action = (product.ProductID == 0) ? "Add" : "Edit";
-                return View(product);
+                ViewBag.Action = "Save";
+                return View("AddUpdate", product);
             }
+        }
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            Product product = context.Products
+                .FirstOrDefault(p => p.ProductID == id);
+            return View(product);
+        }
+
+        [HttpPost]
+        public IActionResult Delete(Product product)
+        {
+            context.Products.Remove(product);
+            context.SaveChanges();
+            return RedirectToAction("List");
         }
     }
 }
