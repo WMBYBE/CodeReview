@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
 namespace SportsPro.Migrations
 {
     public partial class Initial : Migration
@@ -11,8 +13,8 @@ namespace SportsPro.Migrations
                 name: "Countries",
                 columns: table => new
                 {
-                    CountryID = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: false)
+                    CountryID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -23,12 +25,12 @@ namespace SportsPro.Migrations
                 name: "Products",
                 columns: table => new
                 {
-                    ProductID = table.Column<int>(nullable: false)
+                    ProductID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductCode = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: false),
+                    ProductCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     YearlyPrice = table.Column<decimal>(type: "decimal(8,2)", nullable: false),
-                    ReleaseDate = table.Column<DateTime>(nullable: false)
+                    ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -39,11 +41,11 @@ namespace SportsPro.Migrations
                 name: "Technicians",
                 columns: table => new
                 {
-                    TechnicianID = table.Column<int>(nullable: false)
+                    TechnicianID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: false),
-                    Email = table.Column<string>(nullable: false),
-                    Phone = table.Column<string>(nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -54,17 +56,17 @@ namespace SportsPro.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    CustomerID = table.Column<int>(nullable: false)
+                    CustomerID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(nullable: false),
-                    LastName = table.Column<string>(nullable: false),
-                    Address = table.Column<string>(nullable: false),
-                    City = table.Column<string>(nullable: false),
-                    State = table.Column<string>(nullable: false),
-                    PostalCode = table.Column<string>(nullable: false),
-                    CountryID = table.Column<string>(nullable: false),
-                    Phone = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true)
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    State = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PostalCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CountryID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -81,15 +83,15 @@ namespace SportsPro.Migrations
                 name: "Incidents",
                 columns: table => new
                 {
-                    IncidentID = table.Column<int>(nullable: false)
+                    IncidentID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CustomerID = table.Column<int>(nullable: false),
-                    ProductID = table.Column<int>(nullable: false),
-                    TechnicianID = table.Column<int>(nullable: true),
-                    Title = table.Column<string>(nullable: false),
-                    Description = table.Column<string>(nullable: false),
-                    DateOpened = table.Column<DateTime>(nullable: false),
-                    DateClosed = table.Column<DateTime>(nullable: true)
+                    CustomerID = table.Column<int>(type: "int", nullable: false),
+                    ProductID = table.Column<int>(type: "int", nullable: false),
+                    TechnicianID = table.Column<int>(type: "int", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateOpened = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateClosed = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -110,8 +112,7 @@ namespace SportsPro.Migrations
                         name: "FK_Incidents_Technicians_TechnicianID",
                         column: x => x.TechnicianID,
                         principalTable: "Technicians",
-                        principalColumn: "TechnicianID",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "TechnicianID");
                 });
 
             migrationBuilder.InsertData(
@@ -119,46 +120,46 @@ namespace SportsPro.Migrations
                 columns: new[] { "CountryID", "Name" },
                 values: new object[,]
                 {
+                    { "AE", "United Arab Emirates" },
+                    { "AT", "Austria" },
                     { "AU", "Australia" },
-                    { "NZ", "New Zealand" },
+                    { "BE", "Belgium" },
+                    { "BR", "Brazil" },
+                    { "CA", "Canada" },
+                    { "CH", "Switzerland" },
+                    { "CN", "China" },
+                    { "DK", "Denmark" },
+                    { "ES", "Spain" },
+                    { "FI", "Finland" },
+                    { "FR", "France" },
+                    { "GB", "United Kingdom" },
+                    { "GL", "Greenland" },
+                    { "GR", "Greece" },
+                    { "HK", "Hong Kong" },
+                    { "IE", "Ireland" },
+                    { "IL", "Israel" },
+                    { "IN", "India" },
+                    { "IS", "Iceland" },
+                    { "IT", "Italy" },
+                    { "JP", "Japan" },
+                    { "LR", "Liberia" },
+                    { "MX", "Mexico" },
+                    { "MY", "Malaysia" },
                     { "NG", "Nigeria" },
+                    { "NL", "Netherlands" },
+                    { "NZ", "New Zealand" },
                     { "PH", "Philippines" },
                     { "PR", "Puerto Rico" },
+                    { "PT", "Portugal" },
                     { "QA", "Qatar" },
-                    { "SG", "Singapore" },
-                    { "ES", "Spain" },
                     { "SE", "Sweden" },
-                    { "CH", "Switzerland" },
+                    { "SG", "Singapore" },
                     { "TH", "Thailand" },
                     { "TR", "Turkey" },
                     { "UA", "Ukraine" },
-                    { "AE", "United Arab Emirates" },
-                    { "GB", "United Kingdom" },
                     { "US", "United States" },
                     { "VN", "Vietnam" },
-                    { "ZW", "Zimbabwe" },
-                    { "NL", "Netherlands" },
-                    { "MX", "Mexico" },
-                    { "PT", "Portugal" },
-                    { "LR", "Liberia" },
-                    { "AT", "Austria" },
-                    { "BE", "Belgium" },
-                    { "BR", "Brazil" },
-                    { "MY", "Malaysia" },
-                    { "CN", "China" },
-                    { "DK", "Denmark" },
-                    { "FI", "Finland" },
-                    { "FR", "France" },
-                    { "GR", "Greece" },
-                    { "CA", "Canada" },
-                    { "HK", "Hong Kong" },
-                    { "IS", "Iceland" },
-                    { "IN", "India" },
-                    { "IE", "Ireland" },
-                    { "IL", "Israel" },
-                    { "IT", "Italy" },
-                    { "JP", "Japan" },
-                    { "GL", "Greenland" }
+                    { "ZW", "Zimbabwe" }
                 });
 
             migrationBuilder.InsertData(
@@ -166,13 +167,20 @@ namespace SportsPro.Migrations
                 columns: new[] { "ProductID", "Name", "ProductCode", "ReleaseDate", "YearlyPrice" },
                 values: new object[,]
                 {
-                    { 7, "Tournament Master 2.0", "TRNY20", new DateTime(2018, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 5.99m },
-                    { 6, "Tournament Master 1.0", "TRNY10", new DateTime(2015, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4.99m },
-                    { 5, "Team Manager 1.0", "TEAM10", new DateTime(2017, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4.99m },
-                    { 2, "Draft Manager 2.0", "DRAFT20", new DateTime(2019, 7, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 5.99m },
-                    { 3, "League Scheduler 1.0", "LEAG10", new DateTime(2016, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4.99m },
                     { 1, "Draft Manager 1.0", "DRAFT10", new DateTime(2017, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4.99m },
-                    { 4, "League Scheduler Deluxe 1.0", "LEAGD10", new DateTime(2016, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 7.99m }
+                    { 2, "Draft Manager 2.0", "DRAFT20", new DateTime(2019, 7, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 5.99m }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Products",
+                columns: new[] { "ProductID", "Name", "ProductCode", "ReleaseDate", "YearlyPrice" },
+                values: new object[,]
+                {
+                    { 3, "League Scheduler 1.0", "LEAG10", new DateTime(2016, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4.99m },
+                    { 4, "League Scheduler Deluxe 1.0", "LEAGD10", new DateTime(2016, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 7.99m },
+                    { 5, "Team Manager 1.0", "TEAM10", new DateTime(2017, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4.99m },
+                    { 6, "Tournament Master 1.0", "TRNY10", new DateTime(2015, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4.99m },
+                    { 7, "Tournament Master 2.0", "TRNY20", new DateTime(2018, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 5.99m }
                 });
 
             migrationBuilder.InsertData(
@@ -180,10 +188,10 @@ namespace SportsPro.Migrations
                 columns: new[] { "TechnicianID", "Email", "Name", "Phone" },
                 values: new object[,]
                 {
-                    { 14, "gunter@sportsprosoftware.com", "Gunter Wendt", "800-555-0400" },
                     { 11, "alison@sportsprosoftware.com", "Alison Diaz", "800-555-0443" },
                     { 12, "jason@sportsprosoftware.com", "Jason Lee", "800-555-0444" },
                     { 13, "awilson@sportsprosoftware.com", "Andrew Wilson", "800-555-0449" },
+                    { 14, "gunter@sportsprosoftware.com", "Gunter Wendt", "800-555-0400" },
                     { 15, "gfiori@sportsprosoftware.com", "Gina Fiori", "800-555-0459" }
                 });
 
@@ -206,10 +214,10 @@ namespace SportsPro.Migrations
                 columns: new[] { "IncidentID", "CustomerID", "DateClosed", "DateOpened", "Description", "ProductID", "TechnicianID", "Title" },
                 values: new object[,]
                 {
-                    { 2, 1002, null, new DateTime(2020, 1, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), "Received error message 415 while trying to import data from previous version.", 4, 14, "Error importing data" },
                     { 1, 1010, new DateTime(2020, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 1, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), "Media appears to be bad.", 1, 11, "Could not install" },
-                    { 4, 1010, null, new DateTime(2020, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Program fails with error code 510, unable to open database.", 3, null, "Error launching program" },
-                    { 3, 1015, new DateTime(2020, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 1, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), "Setup failed with code 104.", 6, 15, "Could not install" }
+                    { 2, 1002, null, new DateTime(2020, 1, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), "Received error message 415 while trying to import data from previous version.", 4, 14, "Error importing data" },
+                    { 3, 1015, new DateTime(2020, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 1, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), "Setup failed with code 104.", 6, 15, "Could not install" },
+                    { 4, 1010, null, new DateTime(2020, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Program fails with error code 510, unable to open database.", 3, null, "Error launching program" }
                 });
 
             migrationBuilder.CreateIndex(
