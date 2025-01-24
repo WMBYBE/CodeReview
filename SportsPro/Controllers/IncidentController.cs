@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using SportsPro.Models;
 using System.Collections.Generic;
@@ -29,10 +30,18 @@ namespace SportsPro.Controllers
         }
         public IActionResult List()
         {
-            var incidents = context.Incidents.OrderBy(c => c.DateOpened).ToList();
-            ViewBag.Customers = customers;
-            ViewBag.Products = products;
-            ViewBag.Technicians = technicians;
+            var incidents = context.Incidents
+                .Include(i => i.Customer)
+                .Include(i => i.Product)
+                .Select(i => new IncidentViewModel
+                {
+                    IncidentID = i.IncidentID,
+                    Title = i.Title,
+                    CustomerName = i.Customer.FullName,
+                    ProductName = i.Product.Name,
+                    DateOpened = i.DateOpened
+                }).ToList();
+
             return View(incidents);
         }
 

@@ -1,23 +1,23 @@
-﻿@model List<Incident>
+﻿@model List<IncidentViewModel>
 <table class="table table-bordered table-striped">
     <tbody>
+        <tr>
+            <th>Title</th>
+            <th>Customer</th>
+            <th>Product</th>
+            <th>Date Opened</th>
+        </tr>
         @foreach (var incident in Model)
         {
-            <tr>
-                <th>Title</th>
-                <th>Customer</th>
-                <th>Product</th>
-                <th>Date Opened</th>
-            </tr>
             <tr>
                 <td>
                     @incident.Title
                 </td>
                 <td>
-                    @incident.CustomerID
+                    @incident.CustomerName
                 </td>
                 <td>
-                    @incident.ProductID
+                    @incident.ProductName
                 </td>
                 <td>
                     @incident.DateOpened
