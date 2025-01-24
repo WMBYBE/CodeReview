@@ -1,0 +1,40 @@
+﻿@model List<Customer>
+@{
+    ViewBag.Title = "Customer Manager";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>City</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customers in Model)
+        {
+            <tr>
+                <td>@customers.FullName</td>
+                <td>@customers.Email</td>
+                <td>@customers.City</td>
+
+                <td>
+                    <a asp-controller="Customer" asp-action="Edit" asp-route-id="@customers.CustomerID"
+                        class="btn btn-primary">Edit</a>
+                </td>
+
+                <td>
+                    <a asp-controller="Customer" asp-action="Delete" asp-route-id="@customers.CustomerID"
+                       class="btn btn-primary">Delete</a>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-controller="Customer" asp-action="Add" class="btn btn-primary">Add Customer</a>

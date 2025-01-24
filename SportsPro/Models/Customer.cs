@@ -7,10 +7,10 @@ namespace SportsPro.Models
     {
 		public int CustomerID { get; set; }
 
-		[Required]
+		[Required(ErrorMessage = "Not a name")]
 		public string FirstName { get; set; }
 
-		[Required]
+		[Required(ErrorMessage = "Not a name")]
 		public string LastName { get; set; }
 
 		[Required]
@@ -25,10 +25,11 @@ namespace SportsPro.Models
 		[Required]
 		public string PostalCode { get; set; }
 
-		[Required]
-		public string CountryID { get; set; }
+		[Required (ErrorMessage ="Not a valid country")]
+        public string CountryID { get; set; }
 		public Country Country { get; set; }
 
+		[RegularExpression("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$", ErrorMessage ="Not a valid Phone Number") ]
 		public string Phone { get; set; }
 
 		public string Email { get; set; }
