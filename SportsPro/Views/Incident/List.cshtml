@@ -4,14 +4,20 @@
         @foreach (var incident in Model)
         {
             <tr>
+                <th>Title</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Date Opened</th>
+            </tr>
+            <tr>
                 <td>
                     @incident.Title
                 </td>
                 <td>
-                    @ViewBag.Customer
+                    @incident.CustomerID
                 </td>
                 <td>
-                    @ViewBag.Products
+                    @incident.ProductID
                 </td>
                 <td>
                     @incident.DateOpened
