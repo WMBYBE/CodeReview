@@ -18,7 +18,7 @@
             <option value="">Select a Customer</option>
             @foreach (Customer f in ViewBag.Customers)
             {
-                  <option value="@f.CustomerID">@f.FirstName @f.LastName</option>
+                  <option value="@f.CustomerID">@f.FullName</option>
             }
         </select>
     </div>
@@ -28,7 +28,7 @@
             <option value="">Select a Product</option>
             @foreach (Product f in ViewBag.Products)
             {
-                // <option value="@f.ProductID">@f.ProductName</option>
+                <option value="@f.ProductID">@f.Name</option>
             }
         </select>
     </div>
@@ -45,10 +45,10 @@
     <div class="form-group">
         <label asp-for="Technician">Technician</label>
         <select asp-for="Technician" class="form-control">
-            <option value="">Select a Forum to post in</option>
+            <option value="">Select a Technician to service this incident</option>
             @foreach (Technician f in ViewBag.Technicians)
             {
-                // <option value="@f.TechnicianID">@f.TechnicianName</option>
+                 <option value="@f.TechnicianID">@f.Name</option>
             }
         </select>
     </div>
