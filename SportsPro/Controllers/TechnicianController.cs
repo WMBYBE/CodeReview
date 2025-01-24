@@ -102,12 +102,12 @@ namespace SportsPro.Controllers
                 return View("Edit", model);
             }
 
-            // Add the team
+            // Add the tech
 
             _context.Add(model.Technician);
             _context.SaveChanges();
 
-            // Redirect to the user's teams page
+            // Redirect to the tech manager page
             TempData["message"] = $"You just added the team {model.Technician.Name}.";
             return RedirectToAction("List", "Technician");
         }
@@ -143,7 +143,7 @@ namespace SportsPro.Controllers
         {
 
 
-            // Ensure the team exists and is owned by the user
+            // Ensure the tech exists and is owned by the user
             var tech = _context.Technicians
                 .Where(t => t.TechnicianID == id)
                 .FirstOrDefault();
@@ -154,7 +154,7 @@ namespace SportsPro.Controllers
                 return NotFound();
             }
 
-            // Set the appropriate team properties and validate the team
+            // Set the appropriate tech properties and validate the tech
             model.Technician!.TechnicianID = tech.TechnicianID;
             model.Technician.Name = tech.Name;
 
