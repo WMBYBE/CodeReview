@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportsPro.Models;
 
+#nullable disable
+
 namespace SportsPro.Migrations
 {
     [DbContext(typeof(SportsProContext))]
@@ -15,9 +17,10 @@ namespace SportsPro.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "6.0.36")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("SportsPro.Models.Country", b =>
                 {
@@ -239,8 +242,9 @@ namespace SportsPro.Migrations
                 {
                     b.Property<int>("CustomerID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerID"), 1L, 1);
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -380,8 +384,9 @@ namespace SportsPro.Migrations
                 {
                     b.Property<int>("IncidentID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IncidentID"), 1L, 1);
 
                     b.Property<int>("CustomerID")
                         .HasColumnType("int");
@@ -464,8 +469,9 @@ namespace SportsPro.Migrations
                 {
                     b.Property<int>("ProductID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductID"), 1L, 1);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -548,8 +554,9 @@ namespace SportsPro.Migrations
                 {
                     b.Property<int>("TechnicianID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TechnicianID"), 1L, 1);
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -612,6 +619,8 @@ namespace SportsPro.Migrations
                         .HasForeignKey("CountryID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Country");
                 });
 
             modelBuilder.Entity("SportsPro.Models.Incident", b =>
@@ -631,6 +640,12 @@ namespace SportsPro.Migrations
                     b.HasOne("SportsPro.Models.Technician", "Technician")
                         .WithMany()
                         .HasForeignKey("TechnicianID");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Technician");
                 });
 #pragma warning restore 612, 618
         }
