@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SportsPro.Models;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace SportsPro.Controllers
 {
@@ -31,19 +32,40 @@ namespace SportsPro.Controllers
             }
         }
 
+        [NonAction]
+        public bool IsValidEmail(string email)
+        {
+            var regex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+            return regex.IsMatch(email);
+        }
 
         [NonAction]
-        private void ValidateTeamEditViewModel(TechEditViewModel model)
+        public bool IsValidPhone(string phone)
         {
-            // Ensure the team name is unique
+            var regex = new Regex(@"^\d{3}-\d{3}-\d{4}$");
+            return regex.IsMatch(phone);
+        }
+
+        [NonAction]
+        private void ValidateTechEditViewModel(TechEditViewModel model)
+        {
+            // Ensure the tech name is unique
             var tech = _context.Technicians
                 .Where(t => t.TechnicianID != model.Technician!.TechnicianID && t.Name == model.Technician.Name)
                 .FirstOrDefault();
-
+      
 
             if (tech != null)
             {
                 ModelState.AddModelError("Character.Name", "You already have a character with that name.");
+            }
+            if (!IsValidEmail(model.Technician.Email))
+            {
+                ModelState.AddModelError("Email", "Invalid email format.");
+            }
+            if (!IsValidPhone(model.Technician.Phone))
+            {
+                ModelState.AddModelError("Phone Number", "Invalid Phone Number format.");
             }
 
         }
@@ -72,7 +94,7 @@ namespace SportsPro.Controllers
             // Ensure the user is logged in
 
 
-            ValidateTeamEditViewModel(model);
+            ValidateTechEditViewModel(model);
 
             // Show the add form again if there were validation errors
             if (!ModelState.IsValid)
@@ -136,7 +158,7 @@ namespace SportsPro.Controllers
             model.Technician!.TechnicianID = tech.TechnicianID;
             model.Technician.Name = tech.Name;
 
-            ValidateTeamEditViewModel(model);
+            ValidateTechEditViewModel(model);
 
             // Show the edit form again if there were validation errors
             if (!ModelState.IsValid)
