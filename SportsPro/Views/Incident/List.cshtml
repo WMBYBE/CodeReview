@@ -8,10 +8,10 @@
                     @incident.Title
                 </td>
                 <td>
-                    @incident.Customer
+                    @ViewBag.Customer
                 </td>
                 <td>
-                    @incident.Product
+                    @ViewBag.Products
                 </td>
                 <td>
                     @incident.DateOpened
@@ -26,4 +26,4 @@
         }
     </tbody>
 </table>
-<a asp-controller="Product" asp-action="Add" class="btn btn-primary">Add Incident</a>
+<a asp-controller="Incident" asp-action="Add" class="btn btn-primary">Add Incident</a>

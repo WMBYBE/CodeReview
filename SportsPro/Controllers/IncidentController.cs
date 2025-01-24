@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using SportsPro.Models;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SportsPro.Controllers
@@ -8,14 +9,30 @@ namespace SportsPro.Controllers
     public class IncidentController : Controller
     {
         private SportsProContext context { get; set; }
+        private List<Customer> customers;
+        private List<Product> products;
+        private List<Technician> technicians;
+
 
         public IncidentController(SportsProContext ctx)
         {
             context = ctx;
+            customers = context.Customers
+                    .OrderBy(c => c.CustomerID)
+                    .ToList();
+            products = context.Products
+                    .OrderBy(c => c.ProductID)
+                    .ToList();
+            technicians = context.Technicians
+                    .OrderBy(c => c.TechnicianID)
+                    .ToList();
         }
         public IActionResult List()
         {
             var incidents = context.Incidents.OrderBy(c => c.DateOpened).ToList();
+            ViewBag.Customers = customers;
+            ViewBag.Products = products;
+            ViewBag.Technicians = technicians;
             return View(incidents);
         }
 
@@ -27,6 +44,9 @@ namespace SportsPro.Controllers
             Incident incidents = new Incident();
 
             ViewBag.Action = "Add";
+            ViewBag.Customers = customers;
+            ViewBag.Products = products;
+            ViewBag.Technicians = technicians;
 
             // bind product to AddUpdate view
             return View("AddUpdate", incidents);
@@ -37,6 +57,9 @@ namespace SportsPro.Controllers
         {
             Incident incidents = context.Incidents.FirstOrDefault(p => p.IncidentID == id);
             ViewBag.Action = "Edit";
+            ViewBag.Customers = customers;
+            ViewBag.Products = products;
+            ViewBag.Technicians = technicians;
 
             return View("AddUpdate", incidents);
         }
@@ -59,6 +82,9 @@ namespace SportsPro.Controllers
             else
             {
                 ViewBag.Action = "Save";
+                ViewBag.Customers = customers;
+                ViewBag.Products = products;
+                ViewBag.Technicians = technicians;
                 return View("AddUpdate", incidents);
             }
         }

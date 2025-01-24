@@ -16,9 +16,9 @@
         <label asp-for="Customer">Customer</label>
         <select asp-for="Customer" class="form-control">
             <option value="">Select a Customer</option>
-            @foreach (Customer f in ViewBag.Customer)
+            @foreach (Customer f in ViewBag.Customers)
             {
-                <option value="@f.CustomerID">@f.CustomerName</option>
+                  <option value="@f.CustomerID">@f.FirstName @f.LastName</option>
             }
         </select>
     </div>
@@ -28,7 +28,7 @@
             <option value="">Select a Product</option>
             @foreach (Product f in ViewBag.Products)
             {
-                <option value="@f.ProductID">@f.ProductName</option>
+                // <option value="@f.ProductID">@f.ProductName</option>
             }
         </select>
     </div>
@@ -48,7 +48,7 @@
             <option value="">Select a Forum to post in</option>
             @foreach (Technician f in ViewBag.Technicians)
             {
-                <option value="@f.TechnicianID">@f.TechnicianName</option>
+                // <option value="@f.TechnicianID">@f.TechnicianName</option>
             }
         </select>
     </div>
@@ -64,7 +64,7 @@
 
     
 
-    <input type="hidden" asp-for="ProductID" />
+    <input type="hidden" asp-for="IncidentID" />
 
     <button type="submit" class="btn btn-primary">@ViewBag.Action</button>
     <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">Cancel</a>
