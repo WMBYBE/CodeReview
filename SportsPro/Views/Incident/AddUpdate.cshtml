@@ -13,20 +13,20 @@
     <div asp-validation-summary="All" class="text-danger"></div>
 
     <div class="form-group">
-        <label asp-for="Customer">Customer</label>
-        <select asp-for="Customer" class="form-control">
+        <label asp-for="CustomerID">Customer</label>
+        <select asp-for="CustomerID" class="form-control">
             <option value="">Select a Customer</option>
-            @foreach (Customer f in ViewBag.Customers)
+            @foreach (var f in ViewBag.Customers)
             {
                   <option value="@f.CustomerID">@f.FullName</option>
             }
         </select>
     </div>
     <div class="form-group">
-        <label asp-for="Product">Product</label>
-        <select asp-for="Product" class="form-control">
+        <label asp-for="ProductID">Product</label>
+        <select asp-for="ProductID" class="form-control">
             <option value="">Select a Product</option>
-            @foreach (Product f in ViewBag.Products)
+            @foreach (var f in ViewBag.Products)
             {
                 <option value="@f.ProductID">@f.Name</option>
             }
@@ -43,10 +43,10 @@
         <input asp-for="Description" class="form-control">
     </div>
     <div class="form-group">
-        <label asp-for="Technician">Technician</label>
-        <select asp-for="Technician" class="form-control">
+        <label asp-for="TechnicianID">Technician</label>
+        <select asp-for="TechnicianID" class="form-control">
             <option value="">Select a Technician to service this incident</option>
-            @foreach (Technician f in ViewBag.Technicians)
+            @foreach (var f in ViewBag.Technicians)
             {
                  <option value="@f.TechnicianID">@f.Name</option>
             }
