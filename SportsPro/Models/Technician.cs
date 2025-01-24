@@ -5,7 +5,9 @@ namespace SportsPro.Models
 {
     public class Technician
     {
-		public int TechnicianID { get; set; }	   
+        internal object Character;
+
+        public int TechnicianID { get; set; }	   
 
 		[Required]
 		public string Name { get; set; }

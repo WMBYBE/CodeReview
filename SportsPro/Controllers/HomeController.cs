@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
+using SportsPro.Models;
 
 namespace SportsPro.Controllers
 {
@@ -13,5 +16,6 @@ namespace SportsPro.Controllers
         {
             return View();
         }
+
     }
 }

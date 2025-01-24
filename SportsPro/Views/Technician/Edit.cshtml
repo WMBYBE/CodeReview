@@ -1,0 +1,29 @@
+﻿@model TechEditViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Edit Profile";
+}
+
+
+
+<h1 class="heading text-center">@ViewData["Title"]</h1>
+
+<form asp-action="@Model.Mode" method="post" class="col-md-4 offset-md-4 wooden-form p-5" autocomplete="off">
+    <div asp-validation-summary="All" class="mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="Technician.Name" class="form-label">Name</label>
+        <input asp-for="Technician.Name" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Technician.Email" class="form-label">Email</label>
+        <input asp-for="Technician.Email" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Technician.Phone" class="form-label">Phone</label>
+        <input asp-for="Technician.Phone" class="form-control" />
+    </div>
+    <div class="mb-3 text-center">
+        <input type="submit" value="Save" class="button d-inline-block p-3" />
+        <a asp-controller="Technician" asp-action="List" class="button d-inline-block p-3 ms-2">Cancel</a>
+    </div>
+</form>
