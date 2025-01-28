@@ -46,7 +46,6 @@ namespace SportsPro.Controllers
         }
 
         [HttpGet]
-        [Route("/incident/add/")]
         public IActionResult Add()
         {
             // create new Incident object
@@ -57,12 +56,11 @@ namespace SportsPro.Controllers
             ViewBag.Products = products;
             ViewBag.Technicians = technicians;
 
-            // bind product to AddUpdate view
-            return View("AddUpdate", incidents);
+            // bind product to AddEdit view
+            return View("AddEdit", incidents);
         }
         [HttpGet]
-        [Route("/incident/{id}/edit/")]
-        public IActionResult Update(int id)
+        public IActionResult Edit(int id)
         {
             Incident incidents = context.Incidents.FirstOrDefault(p => p.IncidentID == id);
             ViewBag.Action = "Edit";
@@ -70,10 +68,10 @@ namespace SportsPro.Controllers
             ViewBag.Products = products;
             ViewBag.Technicians = technicians;
 
-            return View("AddUpdate", incidents);
+            return View("AddEdit", incidents);
         }
         [HttpPost]
-        public IActionResult Update(Incident incidents)
+        public IActionResult Edit(Incident incidents)
         {
             if (ModelState.IsValid)
             {
@@ -94,11 +92,10 @@ namespace SportsPro.Controllers
                 ViewBag.Customers = customers;
                 ViewBag.Products = products;
                 ViewBag.Technicians = technicians;
-                return View("AddUpdate", incidents);
+                return View("AddEdit", incidents);
             }
         }
         [HttpGet]
-        [Route("/incident/{id}/delete/")]
         public IActionResult Delete(int id)
         {
             Incident incidents = context.Incidents
@@ -107,7 +104,6 @@ namespace SportsPro.Controllers
         }
 
         [HttpPost]
-        [Route("/incident/{id}/delete/")]
         public IActionResult Delete(Incident incidents)
         {
             context.Incidents.Remove(incidents);
