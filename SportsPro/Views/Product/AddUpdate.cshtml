@@ -1,0 +1,39 @@
+﻿@model Product
+@using Microsoft.AspNetCore.Http
+
+@{
+    string title = ViewBag.Action + " Product";
+    ViewBag.Title = title;
+    Layout = "_Layout";
+}
+
+<h2>@title</h2>
+
+<form asp-action="Update" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="ProductCode">Code</label>
+        <input asp-for="ProductCode" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Name">Name</label>
+        <textarea asp-for="Name" class="form-control" id="exampleFormControlTextarea1"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="YearlyPrice">Yearly Price</label>
+        <textarea asp-for="YearlyPrice" class="form-control" id="exampleFormControlTextarea1"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ReleaseDate">Release Date</label>
+        <textarea asp-for="ReleaseDate" class="form-control" id="exampleFormControlTextarea1"></textarea>
+    </div>
+
+    <input type="hidden" asp-for="ProductID" />
+
+    <button type="submit" class="btn btn-primary">@ViewBag.Action</button>
+    <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">Cancel</a>
+</form>

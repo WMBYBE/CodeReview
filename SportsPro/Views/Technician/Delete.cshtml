@@ -1,0 +1,15 @@
+﻿@model Technician
+@{
+    ViewData["Title"] = "Confirm Delete";
+}
+
+<h1 class="heading text-center">Confirm Delete</h1>
+
+<form asp-action="Delete" method="post" class="col-md-4 offset-md-4 wooden-form p-5">
+    <p>Are you sure you want to delete @Model!.Name?</p>
+
+    <div class="text-center">
+        <input type="submit" value="Yes" class="button d-inline-block p-3" />
+        <a asp-controller="Technician" asp-action="List" class="button d-inline-block p-3 ms-2">No</a>
+    </div>
+</form>
