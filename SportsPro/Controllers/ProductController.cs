@@ -13,6 +13,8 @@ namespace SportsPro.Controllers
         {
             context = ctx;
         }
+        [HttpGet]
+        [Route("/products")]
         public IActionResult List()
         {
             var products = context.Products.OrderBy(c => c.ReleaseDate).ToList();
@@ -20,7 +22,6 @@ namespace SportsPro.Controllers
         }
 
         [HttpGet]
-        [Route("/products/add/")]
         public IActionResult Add()
         {
             // create new Product object
@@ -32,7 +33,6 @@ namespace SportsPro.Controllers
             return View("AddUpdate", product);
         }
         [HttpGet]
-        [Route("/products/{id}/edit/")]
         public IActionResult Update(int id)
         {
             Product product = context.Products.FirstOrDefault(p => p.ProductID == id);
@@ -63,7 +63,6 @@ namespace SportsPro.Controllers
             }
         }
         [HttpGet]
-        [Route("/products/{id}/delete/")]
         public IActionResult Delete(int id)
         {
             Product product = context.Products
@@ -72,7 +71,6 @@ namespace SportsPro.Controllers
         }
 
         [HttpPost]
-        [Route("/products/{id}/delete/")]
         public IActionResult Delete(Product product)
         {
             context.Products.Remove(product);
