@@ -1,4 +1,4 @@
-﻿@model List<IncidentViewModel>
+﻿@model IncidentListViewModel
 <table class="table table-bordered table-striped">
     <tbody>
         <tr>
@@ -7,7 +7,7 @@
             <th>Product</th>
             <th>Date Opened</th>
         </tr>
-        @foreach (var incident in Model)
+        @foreach (var incident in Model.Incidents)
         {
             <tr>
                 <td>

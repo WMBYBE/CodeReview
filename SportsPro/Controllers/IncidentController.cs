@@ -32,7 +32,8 @@ namespace SportsPro.Controllers
         [Route("/incidents")]
         public IActionResult List()
         {
-            var incidents = context.Incidents
+            var model = new IncidentListViewModel();
+            model.Incidents = context.Incidents
                 .Include(i => i.Customer)
                 .Include(i => i.Product)
                 .Select(i => new IncidentViewModel
@@ -43,8 +44,7 @@ namespace SportsPro.Controllers
                     ProductName = i.Product.Name,
                     DateOpened = i.DateOpened
                 }).ToList();
-
-            return View(incidents);
+            return View(model);
         }
 
         [HttpGet]
