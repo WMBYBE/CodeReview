@@ -51,49 +51,60 @@ namespace SportsPro.Controllers
         public IActionResult Add()
         {
             // create new Incident object
-            Incident incidents = new Incident();
+            var model = new IncidentEditViewModel()
+            {
+                Mode = "Add",
+                Technicians = technicians,
+                Products = products,
+                Customers = customers,
+                Incident = new Incident()
 
-            ViewBag.Action = "Add";
-            ViewBag.Customers = customers;
-            ViewBag.Products = products;
-            ViewBag.Technicians = technicians;
+            };
+
 
             // bind product to AddUpdate view
-            return View("AddUpdate", incidents);
+            return View("AddUpdate", model);
         }
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            Incident incidents = context.Incidents.FirstOrDefault(p => p.IncidentID == id);
-            ViewBag.Action = "Edit";
-            ViewBag.Customers = customers;
-            ViewBag.Products = products;
-            ViewBag.Technicians = technicians;
+            var model = new IncidentEditViewModel()
+            {
+                Mode = "Edit",
+                Technicians = technicians,
+                Products = products,
+                Customers = customers,
+                Incident = context.Incidents.FirstOrDefault(p => p.IncidentID == id)
 
-            return View("AddUpdate", incidents);
+            };
+
+
+            return View("AddUpdate", model);
         }
         [HttpPost]
-        public IActionResult Edit(Incident incidents)
+        public IActionResult Edit(IncidentEditViewModel incidents)
         {
             if (ModelState.IsValid)
             {
-                if (incidents.ProductID == 0)
+                if (incidents.Incident.ProductID == 0)
                 {
-                    context.Incidents.Add(incidents);
+                    context.Incidents.Add(incidents.Incident);
                 }
                 else
                 {
-                    context.Incidents.Update(incidents);
+                    context.Incidents.Update(incidents.Incident);
                 }
                 context.SaveChanges();
                 return RedirectToAction("List");
             }
             else
             {
-                ViewBag.Action = "Save";
-                ViewBag.Customers = customers;
-                ViewBag.Products = products;
-                ViewBag.Technicians = technicians;
+
+                incidents.Mode = "Save";
+                incidents.Customers = customers;
+                incidents.Products = products;
+                incidents.Technicians = technicians;
+
                 return View("AddUpdate", incidents);
             }
         }
