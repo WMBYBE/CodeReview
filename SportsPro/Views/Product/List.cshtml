@@ -1,4 +1,22 @@
 ﻿@model List<Product>
+@if (TempData.Keys.Contains("delete"))
+{
+    <h3>
+        @TempData["delete"]
+    </h3>
+}
+@if (TempData.Keys.Contains("add"))
+{
+    <h3>
+        @TempData["add"]
+    </h3>
+}
+@if (TempData.Keys.Contains("updated"))
+{
+    <h3>
+        @TempData["updated"]
+    </h3>
+}
 <table class="table table-bordered table-striped">
     <tbody>
         @foreach (var product in Model)
