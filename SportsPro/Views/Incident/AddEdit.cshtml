@@ -15,21 +15,21 @@
     <div asp-validation-summary="All" class="text-danger"></div>
 
     <div class="form-group">
-        <label asp-for="CustomerID">Customer</label>
-        <select asp-for="CustomerID"
+        <label asp-for="Incident.CustomerID">Customer</label>
+        <select asp-for="Incident.CustomerID"
                 asp-items="@(new SelectList(Model.Customers,
                     "CustomerID", "FullName",
-                    Model.Customers.CustomerID.ToString()))"
+                    Model.Incident.CustomerID.ToString()))"
                     class="form-control">
         <option value="">Select a Customer...</option>
         </select>
     </div>
     <div class="form-group">
-        <label asp-for="ProductID">Product</label>
-        <select asp-for="ProductID"
+        <label asp-for="Incident.ProductID">Product</label>
+        <select asp-for="Incident.ProductID"
                 asp-items="@(new SelectList(Model.Products,
                     "ProductID", "Name",
-                    Model.Products.ProductID.ToString()))"
+                    Model.Incident.ProductID.ToString()))"
                 class="form-control">
             <option value="">Select a Product...</option>
         </select>
@@ -45,11 +45,11 @@
         <input asp-for="Incident.Description" class="form-control">
     </div>
     <div class="form-group">
-        <label asp-for="TechnicianID">Technician</label>
-        <select asp-for="TechnicianID"
+        <label asp-for="Incident.TechnicianID">Technician</label>
+        <select asp-for="Incident.TechnicianID"
                 asp-items="@(new SelectList(Model.Technicians,
                     "TechnicianID", "Name",
-                    Model.Technicians.TechnicianID.ToString()))"
+                    Model.Incident.TechnicianID.ToString()))"
                 class="form-control">
             <option value="">Select a Technician...</option>
         </select>

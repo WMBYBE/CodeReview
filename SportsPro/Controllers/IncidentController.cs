@@ -75,11 +75,11 @@ namespace SportsPro.Controllers
                 Products = products,
                 Customers = customers,
                 Incident = context.Incidents.FirstOrDefault(p => p.IncidentID == id)
-
+            };
             return View("AddEdit", model);
         }
         [HttpPost]
-        public IActionResult Edit(Incident incidents)
+        public IActionResult Edit(IncidentEditViewModel incidents)
         {
             if (ModelState.IsValid)
             {
