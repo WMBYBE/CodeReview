@@ -2,10 +2,12 @@
 @using Microsoft.AspNetCore.Http
 
 @{
-    string title = Model.Mode + " Product";
+    string title = Model.Mode + " Incident";
     ViewBag.Title = title;
     Layout = "_Layout";
 }
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
 <h2>@title</h2>
 
@@ -14,22 +16,22 @@
 
     <div class="form-group">
         <label asp-for="Incident.CustomerID">Customer</label>
-        <select asp-for="Incident.CustomerID" class="form-control">
-            <option value="">Select a Customer</option>
-            @foreach (var f in Model.Customers)
-            {
-                  <option value="@f.CustomerID">@f.FullName</option>
-            }
+        <select asp-for="Incident.CustomerID"
+                asp-items="@(new SelectList(Model.Customers,
+                    "CustomerID", "FullName",
+                    Model.Incident.CustomerID.ToString()))"
+                    class="form-control">
+        <option value="">Select a Customer...</option>
         </select>
     </div>
     <div class="form-group">
         <label asp-for="Incident.ProductID">Product</label>
-        <select asp-for="Incident.ProductID" class="form-control">
-            <option value="">Select a Product</option>
-            @foreach (var f in Model.Products)
-            {
-                <option value="@f.ProductID">@f.Name</option>
-            }
+        <select asp-for="Incident.ProductID"
+                asp-items="@(new SelectList(Model.Products,
+                    "ProductID", "Name",
+                    Model.Incident.ProductID.ToString()))"
+                class="form-control">
+            <option value="">Select a Product...</option>
         </select>
     </div>
 
@@ -44,12 +46,12 @@
     </div>
     <div class="form-group">
         <label asp-for="Incident.TechnicianID">Technician</label>
-        <select asp-for="Incident.TechnicianID" class="form-control">
-            <option value="">Select a Technician to service this incident</option>
-            @foreach (var f in Model.Technicians)
-            {
-                 <option value="@f.TechnicianID">@f.Name</option>
-            }
+        <select asp-for="Incident.TechnicianID"
+                asp-items="@(new SelectList(Model.Technicians,
+                    "TechnicianID", "Name",
+                    Model.Incident.TechnicianID.ToString()))"
+                class="form-control">
+            <option value="">Select a Technician...</option>
         </select>
     </div>
     <div class="form-group">

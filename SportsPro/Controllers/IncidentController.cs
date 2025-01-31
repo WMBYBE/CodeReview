@@ -62,8 +62,8 @@ namespace SportsPro.Controllers
             };
 
 
-            // bind product to AddUpdate view
-            return View("AddUpdate", model);
+            // bind product to AddEdit view
+            return View("AddEdit", model);
         }
         [HttpGet]
         public IActionResult Edit(int id)
@@ -75,11 +75,8 @@ namespace SportsPro.Controllers
                 Products = products,
                 Customers = customers,
                 Incident = context.Incidents.FirstOrDefault(p => p.IncidentID == id)
-
             };
-
-
-            return View("AddUpdate", model);
+            return View("AddEdit", model);
         }
         [HttpPost]
         public IActionResult Edit(IncidentEditViewModel incidents)
@@ -105,7 +102,7 @@ namespace SportsPro.Controllers
                 incidents.Products = products;
                 incidents.Technicians = technicians;
 
-                return View("AddUpdate", incidents);
+                return View("AddEdit", incidents);
             }
         }
         [HttpGet]

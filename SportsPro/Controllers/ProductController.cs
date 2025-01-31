@@ -29,19 +29,19 @@ namespace SportsPro.Controllers
 
             ViewBag.Action = "Add";
 
-            // bind product to AddUpdate view
-            return View("AddUpdate", product);
+            // bind product to AddEdit view
+            return View("AddEdit", product);
         }
         [HttpGet]
-        public IActionResult Update(int id)
+        public IActionResult Edit(int id)
         {
             Product product = context.Products.FirstOrDefault(p => p.ProductID == id);
             ViewBag.Action = "Edit";
 
-            return View("AddUpdate", product);
+            return View("AddEdit", product);
         }
         [HttpPost]
-        public IActionResult Update(Product product)
+        public IActionResult Edit(Product product)
         {
             if (ModelState.IsValid)
             {
@@ -59,7 +59,7 @@ namespace SportsPro.Controllers
             else
             {
                 ViewBag.Action = "Save";
-                return View("AddUpdate", product);
+                return View("AddEdit", product);
             }
         }
         [HttpGet]
