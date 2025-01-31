@@ -1,15 +1,17 @@
 ﻿@model TechEditViewModel
 @{
     Layout = "_Layout";
-    ViewData["Title"] = "Edit Profile";
+    ViewData["Title"] = @Model.Mode + " Technician";
 }
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
 
 
 <h1 class="heading text-center">@ViewData["Title"]</h1>
 
 <form asp-action="@Model.Mode" method="post" class="col-md-4 offset-md-4 wooden-form p-5" autocomplete="off">
-    <div asp-validation-summary="All" class="mb-3"></div>
+    <div asp-validation-summary="All" class="mb-3 text-danger"></div>
     <div class="mb-3">
         <label asp-for="Technician.Name" class="form-label">Name</label>
         <input asp-for="Technician.Name" class="form-control" />
@@ -23,7 +25,7 @@
         <input asp-for="Technician.Phone" class="form-control" />
     </div>
     <div class="mb-3 text-center">
-        <input type="submit" value="Save" class="button d-inline-block p-3" />
-        <a asp-controller="Technician" asp-action="List" class="button d-inline-block p-3 ms-2">Cancel</a>
+        <input type="submit" value="Save" class="btn btn-primary mr-2" />
+        <a asp-controller="Technician" asp-action="List" class="btn btn-danger">Cancel</a>
     </div>
 </form>

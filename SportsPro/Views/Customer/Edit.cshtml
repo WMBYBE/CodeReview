@@ -1,9 +1,13 @@
 ﻿@model Customer
 @{
-    ViewBag.Title = "Customer Edit";
+    string title = ViewBag.Action + " Customer";
+    ViewBag.Title = title;
+    Layout = "_Layout";
 }
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
-<h2>@ViewBag.Title</h2>
+<h2>@title</h2>
 
 <form asp-action="edit" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>
@@ -40,12 +44,12 @@
 
     <div class="form-group">
         <label asp-for="CountryID">Country</label>
-        <select asp-for="CountryID" class="form-control">
-            <option value="">Select a country</option>
-            @foreach (Country c in ViewBag.Countries)
-            {
-            <option value="@c.CountryID">@c.Name</option>
-            }
+        <select asp-for="CountryID"
+                asp-items="@(new SelectList(ViewBag.Countries,
+                    "CountryID", "Name",
+                    Model.CountryID.ToString()))"
+                class="form-control">
+            <option value="">Select a Country...</option>
         </select>
         <span asp-validation-for="CountryID" class="text-danger"></span>
     </div>
