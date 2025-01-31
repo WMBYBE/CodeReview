@@ -13,6 +13,8 @@ namespace SportsPro.Controllers
         {
             _context = context;
         }
+        [HttpGet]
+        [Route("/technicians")]
         public IActionResult List()
         {
             var techs = _context.Technicians.ToList();
@@ -72,7 +74,6 @@ namespace SportsPro.Controllers
 
 
         [HttpGet]
-        [Route("/tech/add/")]
         public ActionResult Add()
         {
             var model = new TechEditViewModel()
@@ -86,7 +87,6 @@ namespace SportsPro.Controllers
         }
 
         [HttpPost]
-        [Route("/tech/add/")]
         public ActionResult Add(TechEditViewModel model)
         {
             model.Mode = "Add";
@@ -113,7 +113,6 @@ namespace SportsPro.Controllers
         }
 
         [HttpGet]
-        [Route("/tech/{id}/edit/")]
         public ActionResult Edit(int id)
         {
             var model = new TechEditViewModel()
@@ -138,7 +137,6 @@ namespace SportsPro.Controllers
         }
 
         [HttpPost]
-        [Route("/tech/{id}/edit/")]
         public ActionResult Edit(int id, TechEditViewModel model)
         {
 
@@ -178,7 +176,6 @@ namespace SportsPro.Controllers
         }
 
         [HttpGet]
-        [Route("/tech/{id}/delete/")]
         public ActionResult Delete(int id)
         {
             // Ensure the user is logged in
@@ -199,7 +196,6 @@ namespace SportsPro.Controllers
         }
 
         [HttpPost]
-        [Route("/tech/{id}/delete/")]
         public ActionResult Delete(int id, Technician model)
         {
 

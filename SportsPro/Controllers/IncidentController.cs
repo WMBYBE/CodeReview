@@ -28,9 +28,12 @@ namespace SportsPro.Controllers
                     .OrderBy(c => c.TechnicianID)
                     .ToList();
         }
+        [HttpGet]
+        [Route("/incidents")]
         public IActionResult List()
         {
-            var incidents = context.Incidents
+            var model = new IncidentListViewModel();
+            model.Incidents = context.Incidents
                 .Include(i => i.Customer)
                 .Include(i => i.Product)
                 .Select(i => new IncidentViewModel
@@ -41,57 +44,64 @@ namespace SportsPro.Controllers
                     ProductName = i.Product.Name,
                     DateOpened = i.DateOpened
                 }).ToList();
-
-            return View(incidents);
+            return View(model);
         }
 
         [HttpGet]
         public IActionResult Add()
         {
             // create new Incident object
-            Incident incidents = new Incident();
+            var model = new IncidentEditViewModel()
+            {
+                Mode = "Add",
+                Technicians = technicians,
+                Products = products,
+                Customers = customers,
+                Incident = new Incident()
 
-            ViewBag.Action = "Add";
-            ViewBag.Customers = customers;
-            ViewBag.Products = products;
-            ViewBag.Technicians = technicians;
+            };
+
 
             // bind product to AddEdit view
-            return View("AddEdit", incidents);
+            return View("AddEdit", model);
         }
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            Incident incidents = context.Incidents.FirstOrDefault(p => p.IncidentID == id);
-            ViewBag.Action = "Edit";
-            ViewBag.Customers = customers;
-            ViewBag.Products = products;
-            ViewBag.Technicians = technicians;
+            var model = new IncidentEditViewModel()
+            {
+                Mode = "Edit",
+                Technicians = technicians,
+                Products = products,
+                Customers = customers,
+                Incident = context.Incidents.FirstOrDefault(p => p.IncidentID == id)
 
-            return View("AddEdit", incidents);
+            return View("AddEdit", model);
         }
         [HttpPost]
         public IActionResult Edit(Incident incidents)
         {
             if (ModelState.IsValid)
             {
-                if (incidents.ProductID == 0)
+                if (incidents.Incident.ProductID == 0)
                 {
-                    context.Incidents.Add(incidents);
+                    context.Incidents.Add(incidents.Incident);
                 }
                 else
                 {
-                    context.Incidents.Update(incidents);
+                    context.Incidents.Update(incidents.Incident);
                 }
                 context.SaveChanges();
                 return RedirectToAction("List");
             }
             else
             {
-                ViewBag.Action = "Save";
-                ViewBag.Customers = customers;
-                ViewBag.Products = products;
-                ViewBag.Technicians = technicians;
+
+                incidents.Mode = "Save";
+                incidents.Customers = customers;
+                incidents.Products = products;
+                incidents.Technicians = technicians;
+
                 return View("AddEdit", incidents);
             }
         }

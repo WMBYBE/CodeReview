@@ -1,8 +1,8 @@
-﻿@model Incident
+﻿@model IncidentEditViewModel
 @using Microsoft.AspNetCore.Http
 
 @{
-    string title = ViewBag.Action + " Incident";
+    string title = Model.Mode + " Incident";
     ViewBag.Title = title;
     Layout = "_Layout";
 }
@@ -17,9 +17,9 @@
     <div class="form-group">
         <label asp-for="CustomerID">Customer</label>
         <select asp-for="CustomerID"
-                asp-items="@(new SelectList(ViewBag.Customers,
+                asp-items="@(new SelectList(Model.Customers,
                     "CustomerID", "FullName",
-                    Model.CustomerID.ToString()))"
+                    Model.Customers.CustomerID.ToString()))"
                     class="form-control">
         <option value="">Select a Customer...</option>
         </select>
@@ -27,47 +27,47 @@
     <div class="form-group">
         <label asp-for="ProductID">Product</label>
         <select asp-for="ProductID"
-                asp-items="@(new SelectList(ViewBag.Products,
+                asp-items="@(new SelectList(Model.Products,
                     "ProductID", "Name",
-                    Model.ProductID.ToString()))"
+                    Model.Products.ProductID.ToString()))"
                 class="form-control">
             <option value="">Select a Product...</option>
         </select>
     </div>
 
     <div class="form-group">
-        <label asp-for="Title">Title</label>
-        <input asp-for="Title" class="form-control">
+        <label asp-for="Incident.Title">Title</label>
+        <input asp-for="Incident.Title" class="form-control">
     </div>
 
     <div class="form-group">
-        <label asp-for="Description">Description</label>
-        <input asp-for="Description" class="form-control">
+        <label asp-for="Incident.Description">Description</label>
+        <input asp-for="Incident.Description" class="form-control">
     </div>
     <div class="form-group">
         <label asp-for="TechnicianID">Technician</label>
         <select asp-for="TechnicianID"
-                asp-items="@(new SelectList(ViewBag.Technicians,
+                asp-items="@(new SelectList(Model.Technicians,
                     "TechnicianID", "Name",
-                    Model.TechnicianID.ToString()))"
+                    Model.Technicians.TechnicianID.ToString()))"
                 class="form-control">
             <option value="">Select a Technician...</option>
         </select>
     </div>
     <div class="form-group">
-        <label asp-for="DateOpened">Date Opened</label>
-        <input asp-for="DateOpened" class="form-control">
+        <label asp-for="Incident.DateOpened">Date Opened</label>
+        <input asp-for="Incident.DateOpened" class="form-control">
     </div>
 
     <div class="form-group">
-        <label asp-for="DateClosed">Date Closed</label>
-        <input asp-for="DateClosed" class="form-control">
+        <label asp-for="Incident.DateClosed">Date Closed</label>
+        <input asp-for="Incident.DateClosed" class="form-control">
     </div>
 
     
 
-    <input type="hidden" asp-for="IncidentID" />
+    <input type="hidden" asp-for="Incident.IncidentID" />
 
-    <button type="submit" class="btn btn-primary">@ViewBag.Action</button>
+    <button type="submit" class="btn btn-primary">@Model.Mode</button>
     <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">Cancel</a>
 </form>
