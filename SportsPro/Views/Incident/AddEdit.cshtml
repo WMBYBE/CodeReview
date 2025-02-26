@@ -69,5 +69,11 @@
     <input type="hidden" asp-for="Incident.IncidentID" />
 
     <button type="submit" class="btn btn-primary">@Model.Mode</button>
-    <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">Cancel</a>
+    @if (Context.Session.GetInt32("TechnicianID").HasValue)
+    {
+        <a asp-area="" asp-controller="Incident" asp-action="SelectTech" class="btn btn-primary">Cancel</a>
+    }else
+    {
+        <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">Cancel</a>
+    }
 </form>
