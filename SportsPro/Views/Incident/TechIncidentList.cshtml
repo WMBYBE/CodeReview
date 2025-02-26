@@ -1,0 +1,58 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model TechIncidentViewModel
+@using Microsoft.AspNetCore.Http
+@{
+    Context.Session.SetInt32("TechnicianID", Model.SelectedTech.TechnicianID);
+}
+
+
+<h2>Technician: @Model.SelectedTech.Name</h2>
+<h2>Assigned/Open Incidents</h2>
+
+<table class="table table-bordered table-striped">
+    @if (Model.Incidents == null || !Model.Incidents.Any())
+    {
+        <p>No incidents found.</p>
+
+    } else{
+    <thead>
+
+            <tr>
+                <th>Title</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Date Opened</th>
+
+            </tr>
+               
+    </thead>
+    <tbody>
+        @foreach (var incident in Model.Incidents)
+        {
+            <tr>
+                <td>@incident.Title</td>
+                <td>@incident.Customer.FullName</td>
+                <td>@incident.Product.Name</td>
+                <td>@incident.DateOpened</td>
+                <td>
+                    <a asp-controller="Incident" asp-action="Edit" asp-route-id="@incident.IncidentID"
+                        class="btn btn-primary">Edit</a>
+                </td>
+
+            </tr>
+        }
+
+         
+    </tbody>
+
+       
+    }
+
+</table>
+<a asp-controller="Incident" asp-action="SelectTech"
+           class="btn btn-primary">Switch Technician</a>
+

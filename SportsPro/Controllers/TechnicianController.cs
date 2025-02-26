@@ -220,5 +220,6 @@ namespace SportsPro.Controllers
             return RedirectToAction("List", "Technician");
         }
 
+        
     }
 }

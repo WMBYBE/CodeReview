@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 
 using Microsoft.EntityFrameworkCore;
 using SportsPro.Models;
+using System;
 
 namespace SportsPro
 {
@@ -31,6 +32,14 @@ namespace SportsPro
                 options.LowercaseUrls = true;
                 options.AppendTrailingSlash = true;
             });
+
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
         }
 
         // Use this method to configure the HTTP request pipeline.
@@ -53,12 +62,16 @@ namespace SportsPro
 
             app.UseAuthorization();
 
+            app.UseSession();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}/");
             });
+
+
         }
     }
 }
