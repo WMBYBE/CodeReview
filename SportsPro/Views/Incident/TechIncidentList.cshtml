@@ -24,8 +24,8 @@
         {
             <tr>
                 <td>@incident.Title</td>
-                <td>@incident.CustomerName</td>
-                <td>@incident.ProductName</td>
+                <td>@incident.Customer.FullName</td>
+                <td>@incident.Product.Name</td>
                 <td>@incident.DateOpened</td>
                 <td>
                     <a asp-controller="Incident" asp-action="Edit" asp-route-id="@incident.IncidentID"

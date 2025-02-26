@@ -123,10 +123,13 @@ namespace SportsPro.Controllers
 
         [HttpGet]
         public ActionResult ListByTech() {
-            var model = new TechIncidentViewModel();
+            var model = new TechIncidentViewModel()
+            {
+                Technicians = context.Technicians.ToList(),
+                Incidents = context.Incidents.ToList(),
+                SelectedTech = new Technician()
 
-            model.Technicians = context.Technicians.ToList();
-
+            };
             return View("TechIncident", model);
 
         }
@@ -139,14 +142,7 @@ namespace SportsPro.Controllers
             model.Incidents = context.Incidents
                 .Where(c => c.TechnicianID == model.SelectedTech.TechnicianID)
                 .Where(c => c.DateClosed == null)
-                .Select(i => new IncidentViewModel
-                {
-                    IncidentID = i.IncidentID,
-                    Title = i.Title,
-                    CustomerName = i.Customer.FullName,
-                    ProductName = i.Product.Name,
-                    DateOpened = i.DateOpened
-                }).ToList();
+                .ToList();
 
             return View("TechIncidentList", model);
 
