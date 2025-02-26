@@ -1,6 +1,9 @@
 ﻿@model TechIncidentViewModel
 @using Microsoft.AspNetCore.Http
-
+@{
+    int? technicianId = Context.Session.GetInt32("TechnicianID");
+    if (technicianId.HasValue) { Context.Session.Remove("TechnicianID"); }
+}
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 

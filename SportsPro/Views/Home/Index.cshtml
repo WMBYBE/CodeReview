@@ -1,6 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Technicians";
 }
+@using Microsoft.AspNetCore.Http
+@{int? technicianId = Context.Session.GetInt32("TechnicianID");
+if (technicianId.HasValue){Context.Session.Remove("TechnicianID");}}
 
 <h1>SportsPro Technical Support</h1>
 <p>Sports management software for the sports enthusiast</p>
