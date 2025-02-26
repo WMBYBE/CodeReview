@@ -136,12 +136,7 @@ namespace SportsPro.Controllers
 
 
         public ActionResult SelectTech() {
-            int? technicianId = HttpContext.Session.GetInt32("TechnicianID");
-
-            if (technicianId.HasValue)
-            {
-                HttpContext.Session.Remove("TechIncidentID");
-            }
+            
             var model = new TechIncidentViewModel()
             {
                 Technicians = context.Technicians.ToList(),

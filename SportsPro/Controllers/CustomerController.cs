@@ -13,10 +13,7 @@ namespace SportsPro.Controllers
         {
             Context = ctx;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+     
         [HttpGet]
         [Route("/customers")]
         public IActionResult List()
