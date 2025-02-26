@@ -13,8 +13,7 @@
     @if (Model.Incidents == null || !Model.Incidents.Any())
     {
         <p>No incidents found.</p>
-        <a asp-controller="Incident" asp-action="ListByTech"
-           class="btn btn-primary">Switch Technician</a>
+
     } else{
     <thead>
 
@@ -42,11 +41,14 @@
 
             </tr>
         }
-        
+
+         
     </tbody>
-        <a asp-controller="Incident" asp-action="ListByTech"
-           class="btn btn-primary">Switch Technician</a>
+
+       
     }
 
 </table>
+<a asp-controller="Incident" asp-action="ListByTech"
+           class="btn btn-primary">Switch Technician</a>
 
