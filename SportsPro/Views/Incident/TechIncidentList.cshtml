@@ -10,9 +10,14 @@
 <h2>Assigned/Open Incidents</h2>
 
 <table class="table table-bordered table-striped">
+    @if (Model.Incidents == null || !Model.Incidents.Any())
+    {
+        <p>No incidents found.</p>
+        <a asp-controller="Incident" asp-action="ListByTech"
+           class="btn btn-primary">Switch Technician</a>
+    } else{
     <thead>
-        @if (Model.Incidents != null || Model.Incidents.Any())
-        {
+
             <tr>
                 <th>Title</th>
                 <th>Customer</th>
@@ -20,37 +25,28 @@
                 <th>Date Opened</th>
 
             </tr>
-        }
-       
+               
     </thead>
     <tbody>
-        @if (Model.Incidents == null || !Model.Incidents.Any())
+        @foreach (var incident in Model.Incidents)
         {
-            <p>No incidents found.</p>
-        } else
-        {
-            @foreach (var incident in Model.Incidents)
-            {
-                <tr>
-                    <td>@incident.Title</td>
-                    <td>@incident.Customer.FullName</td>
-                    <td>@incident.Product.Name</td>
-                    <td>@incident.DateOpened</td>
-                    <td>
-                        <a asp-controller="Incident" asp-action="Edit" asp-route-id="@incident.IncidentID"
-                           class="btn btn-primary">Edit</a>
-                    </td>
+            <tr>
+                <td>@incident.Title</td>
+                <td>@incident.Customer.FullName</td>
+                <td>@incident.Product.Name</td>
+                <td>@incident.DateOpened</td>
+                <td>
+                    <a asp-controller="Incident" asp-action="Edit" asp-route-id="@incident.IncidentID"
+                        class="btn btn-primary">Edit</a>
+                </td>
 
-                </tr>
-            }
+            </tr>
         }
-
-        <tr>
-            <td>
-                <a asp-controller="Incident" asp-action="ListByTech"
-                   class="btn btn-primary">Switch Technician</a>
-            </td>
-        </tr>
+        
     </tbody>
+        <a asp-controller="Incident" asp-action="ListByTech"
+           class="btn btn-primary">Switch Technician</a>
+    }
+
 </table>
 
