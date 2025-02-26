@@ -71,7 +71,8 @@
     <button type="submit" class="btn btn-primary">@Model.Mode</button>
     @if (Context.Session.GetInt32("TechnicianID").HasValue)
     {
-        <a asp-area="" asp-controller="Incident" asp-action="SelectTech" class="btn btn-primary">Cancel</a>
+        <a asp-area="" asp-controller="Incident" asp-action="ListByTech" asp-route-id="@Context.Session.GetInt32("TechnicianID")" class="btn btn-primary">Cancel</a>
+
     }else
     {
         <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">Cancel</a>

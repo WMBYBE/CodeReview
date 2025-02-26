@@ -4,6 +4,10 @@
 @{
 }
 @model TechIncidentViewModel
+@using Microsoft.AspNetCore.Http
+@{
+    Context.Session.SetInt32("TechnicianID", Model.SelectedTech.TechnicianID);
+}
 
 
 <h2>Technician: @Model.SelectedTech.Name</h2>
