@@ -11,28 +11,38 @@
 
 <table class="table table-bordered table-striped">
     <thead>
-        <tr>
-            <th>Title</th>
-            <th>Customer</th>
-            <th>Product</th>
-            <th>Date Opened</th>
-
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var incident in Model.Incidents)
+        @if (Model.Incidents != null || Model.Incidents.Any())
         {
             <tr>
-                <td>@incident.Title</td>
-                <td>@incident.Customer.FullName</td>
-                <td>@incident.Product.Name</td>
-                <td>@incident.DateOpened</td>
-                <td>
-                    <a asp-controller="Incident" asp-action="Edit" asp-route-id="@incident.IncidentID"
-                       class="btn btn-primary">Edit</a>
-                </td>
+                <th>Title</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Date Opened</th>
 
             </tr>
+        }
+       
+    </thead>
+    <tbody>
+        @if (Model.Incidents == null || !Model.Incidents.Any())
+        {
+            <p>No incidents found.</p>
+        } else
+        {
+            @foreach (var incident in Model.Incidents)
+            {
+                <tr>
+                    <td>@incident.Title</td>
+                    <td>@incident.Customer.FullName</td>
+                    <td>@incident.Product.Name</td>
+                    <td>@incident.DateOpened</td>
+                    <td>
+                        <a asp-controller="Incident" asp-action="Edit" asp-route-id="@incident.IncidentID"
+                           class="btn btn-primary">Edit</a>
+                    </td>
+
+                </tr>
+            }
         }
 
         <tr>
