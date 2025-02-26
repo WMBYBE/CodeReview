@@ -120,5 +120,36 @@ namespace SportsPro.Controllers
             context.SaveChanges();
             return RedirectToAction("List");
         }
+
+        [HttpGet]
+        public ActionResult ListByTech() {
+            var model = new TechIncidentViewModel();
+
+            model.Technicians = context.Technicians.ToList();
+
+            return View("TechIncident", model);
+
+        }
+
+        [HttpPost]
+        public ActionResult ListByTech(TechIncidentViewModel model) {
+
+            model.SelectedTech = context.Technicians.Where(p => p.TechnicianID == model.SelectedTech.TechnicianID).FirstOrDefault();
+
+            model.Incidents = context.Incidents
+                .Where(c => c.TechnicianID == model.SelectedTech.TechnicianID)
+                .Where(c => c.DateClosed == null)
+                .Select(i => new IncidentViewModel
+                {
+                    IncidentID = i.IncidentID,
+                    Title = i.Title,
+                    CustomerName = i.Customer.FullName,
+                    ProductName = i.Product.Name,
+                    DateOpened = i.DateOpened
+                }).ToList();
+
+            return View("TechIncidentList", model);
+
+        }
     }
 }
