@@ -11,7 +11,7 @@ namespace SportsPro.Models
         public string ProductName { get; set; }
         public DateTime DateOpened { get; set; }
 
-        List<IncidentViewModel> Incidents { get; set }
-        public string filter { get; set }
+        List<IncidentViewModel> Incidents { get; set; }
+        public string filter { get; set; }
     }
 }
