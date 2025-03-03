@@ -103,7 +103,31 @@ namespace SportsPro.Controllers
                     context.Incidents.Update(incidents.Incident);
                 }
                 context.SaveChanges();
+
+                int? technicianId = HttpContext.Session.GetInt32("TechnicianID");
+                
+                if (technicianId.HasValue)
+                {
+                    var model = new TechIncidentViewModel()
+                    {
+                        Technicians = context.Technicians.ToList(),
+                        Incidents = context.Incidents.ToList(),
+                        SelectedTech = new Technician()
+
+                    };
+
+                    model.SelectedTech = context.Technicians.Where(p => p.TechnicianID == technicianId).FirstOrDefault();
+
+                    model.Incidents = context.Incidents
+                        .Where(c => c.TechnicianID == technicianId)
+                        .Where(c => c.DateClosed == null)
+                        .ToList();
+                    return View("TechIncidentList", model);
+                } else
+                {
                 return RedirectToAction("List");
+
+                }
             }
             else
             {

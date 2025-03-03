@@ -22,7 +22,10 @@ namespace SportsPro
         // Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddControllersWithViews();
+            services.AddMemoryCache();
+            services.AddSession();
 
             services.AddDbContext<SportsProContext>(options =>
                 options.UseSqlServer(
@@ -34,10 +37,11 @@ namespace SportsPro
             });
 
             services.AddDistributedMemoryCache();
+
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
-                options.Cookie.HttpOnly = true;
+                options.Cookie.HttpOnly = false;
                 options.Cookie.IsEssential = true;
             });
         }
