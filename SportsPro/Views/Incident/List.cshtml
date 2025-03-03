@@ -6,13 +6,13 @@
 
 <ul class="nav nav-pills mb-3">
     <li class="nav-item">
-        <a class="nav-link @(Model.Filter == "all" ? "active" : "")" asp-action="List" asp-route-filter="all"> All Incidents</a>
+        <a class="nav-link @(Model.Filter == "all" ? "active" : "")" href="/incidents/all/"> All Incidents</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link @(Model.Filter == "unassigned" ? "active" : "")" asp-action="List" asp-route-filter="unassigned"> Unassigned Incidents</a>
+        <a class="nav-link @(Model.Filter == "unassigned" ? "active" : "")" href="/incidents/unassigned/"> Unassigned Incidents</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link @(Model.Filter == "open" ? "active" : "")" asp-action="List" asp-route-filter="open"> Open Incidents</a>
+        <a class="nav-link @(Model.Filter == "open" ? "active" : "")" href="/incidents/open/"> Open Incidents</a>
     </li>
 </ul>
 

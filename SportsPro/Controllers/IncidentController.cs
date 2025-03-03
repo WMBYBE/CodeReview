@@ -29,7 +29,7 @@ namespace SportsPro.Controllers
                     .ToList();
         }
         [HttpGet]
-        [Route("/incidents")]
+        [Route("/incidents/{filter?}")]
         public IActionResult List(string filter = "all")
         {
             var model = new IncidentListViewModel();
