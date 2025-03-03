@@ -41,7 +41,7 @@ namespace SportsPro.Controllers
             switch (filter.ToLower())
             {
                 case "unassigned":
-                    query = query.Where(i => i.TechnicianID == -1);
+                    query = query.Where(i => i.TechnicianID == null);
                     break;
                 case "open":
                     query = query.Where(i => i.DateClosed == null);
