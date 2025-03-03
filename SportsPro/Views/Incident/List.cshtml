@@ -1,6 +1,10 @@
 ﻿@model IncidentListViewModel
+@using Microsoft.AspNetCore.Http
+
 @{
     ViewData["Title"] = "incident Manager";
+  int? technicianId = Context.Session.GetInt32("TechnicianID");
+    if (technicianId.HasValue) { Context.Session.Remove("TechnicianID"); }
 }
 <h1> Incident Manager </h1>
 
@@ -15,6 +19,8 @@
         <a class="nav-link @(Model.Filter == "open" ? "active" : "")" href="/incidents/open/"> Open Incidents</a>
     </li>
 </ul>
+
+
 
 <table class="table table-bordered table-striped">
     <tbody>

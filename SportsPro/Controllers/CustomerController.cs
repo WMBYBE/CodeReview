@@ -13,10 +13,7 @@ namespace SportsPro.Controllers
         {
             Context = ctx;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+     
         [HttpGet]
         [Route("/customers")]
         public IActionResult List()
@@ -29,7 +26,8 @@ namespace SportsPro.Controllers
         {
             ViewBag.Action = "Add";
             ViewBag.Countries = Context.Countries.OrderBy(c => c.Name).ToList();
-            return View("Edit", new Customer()); 
+            var customer = new Customer();
+            return View("Edit", customer); 
         }
         [HttpGet]
         public IActionResult Edit(int id)

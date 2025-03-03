@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 
 using Microsoft.EntityFrameworkCore;
 using SportsPro.Models;
+using System;
 
 namespace SportsPro
 {
@@ -21,7 +22,10 @@ namespace SportsPro
         // Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddControllersWithViews();
+            services.AddMemoryCache();
+            services.AddSession();
 
             services.AddDbContext<SportsProContext>(options =>
                 options.UseSqlServer(
@@ -30,6 +34,15 @@ namespace SportsPro
             services.AddRouting(options => {
                 options.LowercaseUrls = true;
                 options.AppendTrailingSlash = true;
+            });
+
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = false;
+                options.Cookie.IsEssential = true;
             });
         }
 
@@ -53,12 +66,16 @@ namespace SportsPro
 
             app.UseAuthorization();
 
+            app.UseSession();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}/");
             });
+
+
         }
     }
 }

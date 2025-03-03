@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using SportsPro.Models;
@@ -17,6 +18,7 @@ namespace SportsPro.Controllers
 
         public IncidentController(SportsProContext ctx)
         {
+
             context = ctx;
             customers = context.Customers
                     .OrderBy(c => c.CustomerID)
@@ -32,6 +34,12 @@ namespace SportsPro.Controllers
         [Route("/incidents/{filter?}")]
         public IActionResult List(string filter = "all")
         {
+            int? technicianId = HttpContext.Session.GetInt32("TechnicianID");
+
+            if (technicianId.HasValue)
+            {
+                HttpContext.Session.Remove("TechIncidentID");
+            }
             var model = new IncidentListViewModel();
 
             IQueryable<Incident> query = context.Incidents
@@ -69,6 +77,7 @@ namespace SportsPro.Controllers
         [HttpGet]
         public IActionResult Add()
         {
+            
             // create new Incident object
             var model = new IncidentEditViewModel()
             {
@@ -87,6 +96,7 @@ namespace SportsPro.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
+            
             var model = new IncidentEditViewModel()
             {
                 Mode = "Edit",
@@ -100,6 +110,7 @@ namespace SportsPro.Controllers
         [HttpPost]
         public IActionResult Edit(IncidentEditViewModel incidents)
         {
+           
             if (ModelState.IsValid)
             {
                 if (incidents.Incident.ProductID == 0)
@@ -111,7 +122,31 @@ namespace SportsPro.Controllers
                     context.Incidents.Update(incidents.Incident);
                 }
                 context.SaveChanges();
+
+                int? technicianId = HttpContext.Session.GetInt32("TechnicianID");
+                
+                if (technicianId.HasValue)
+                {
+                    var model = new TechIncidentViewModel()
+                    {
+                        Technicians = context.Technicians.ToList(),
+                        Incidents = context.Incidents.ToList(),
+                        SelectedTech = new Technician()
+
+                    };
+
+                    model.SelectedTech = context.Technicians.Where(p => p.TechnicianID == technicianId).FirstOrDefault();
+
+                    model.Incidents = context.Incidents
+                        .Where(c => c.TechnicianID == technicianId)
+                        .Where(c => c.DateClosed == null)
+                        .ToList();
+                    return View("TechIncidentList", model);
+                } else
+                {
                 return RedirectToAction("List");
+
+                }
             }
             else
             {
@@ -138,6 +173,61 @@ namespace SportsPro.Controllers
             context.Incidents.Remove(incidents);
             context.SaveChanges();
             return RedirectToAction("List");
+        }
+
+        
+
+
+        public ActionResult SelectTech() {
+            
+            var model = new TechIncidentViewModel()
+            {
+                Technicians = context.Technicians.ToList(),
+                Incidents = context.Incidents.ToList(),
+                SelectedTech = new Technician()
+
+            };
+            return View("TechIncident", model);
+
+        }
+        [HttpGet]
+        public ActionResult ListByTech(int Id) {
+            var model = new TechIncidentViewModel()
+            {
+                Technicians = context.Technicians.ToList(),
+                Incidents = context.Incidents.ToList(),
+                SelectedTech = new Technician()
+
+            };
+
+            model.SelectedTech = context.Technicians.Where(p => p.TechnicianID == Id).FirstOrDefault();
+
+            model.Incidents = context.Incidents
+                .Where(c => c.TechnicianID == Id)
+                .Where(c => c.DateClosed == null)
+                .ToList();
+
+            return View("TechIncidentList", model);
+
+        }
+        [HttpPost]
+        public ActionResult ListByTech(TechIncidentViewModel model) {
+            int? technicianId = HttpContext.Session.GetInt32("TechnicianID");
+
+            if (technicianId.HasValue)
+            {
+                HttpContext.Session.Remove("TechIncidentID");
+            }
+
+            model.SelectedTech = context.Technicians.Where(p => p.TechnicianID == model.SelectedTech.TechnicianID).FirstOrDefault();
+
+            model.Incidents = context.Incidents
+                .Where(c => c.TechnicianID == model.SelectedTech.TechnicianID)
+                .Where(c => c.DateClosed == null)
+                .ToList();
+
+            return View("TechIncidentList", model);
+
         }
     }
 }
