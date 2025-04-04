@@ -8,10 +8,12 @@ namespace SportsPro.Controllers
     public class CustomerController : Controller
     {
         private SportsProContext Context {  get; set; }
+        private IRepository<Customer> data { get; set; }
 
-        public CustomerController(SportsProContext ctx) 
+        public CustomerController(SportsProContext ctx, IRepository<Customer> rep) 
         {
             Context = ctx;
+            data = rep;
         }
      
         [HttpGet]

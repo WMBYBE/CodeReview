@@ -22,7 +22,7 @@ namespace SportsPro
         // Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddControllersWithViews();
             services.AddMemoryCache();
             services.AddSession();
@@ -37,6 +37,7 @@ namespace SportsPro
             });
 
             services.AddDistributedMemoryCache();
+
 
             services.AddSession(options =>
             {
@@ -62,6 +63,9 @@ namespace SportsPro
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            
+           
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -74,7 +78,7 @@ namespace SportsPro
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}/");
             });
-
+  
 
         }
     }

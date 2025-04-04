@@ -7,15 +7,16 @@ namespace SportsPro.Controllers
 {
     public class ProductController : Controller
     {
-        private SportsProContext context { get; set; }
+        private IRepository<Product> data { get; set; }
 
-        public ProductController(SportsProContext ctx)
+
+        public ProductController(IRepository<Product> rep)
         {
-            context = ctx;
+            data = rep;
         }
         public ViewResult List()
         {
-            var products = context.Products.OrderBy(c => c.ReleaseDate).ToList();
+            var products = data.GetAll().OrderBy(p => p.ReleaseDate).ToList();
             return View(products);
         }
 
@@ -33,7 +34,7 @@ namespace SportsPro.Controllers
 
         public ViewResult Edit(int id)
         {
-            Product product = context.Products.FirstOrDefault(p => p.ProductID == id);
+            Product product = data.GetById(id);
             ViewBag.Action = "Edit";
 
             return View("AddEdit", product);
@@ -47,12 +48,12 @@ namespace SportsPro.Controllers
                 if (product.ProductID == 0)
                 {
                     TempData["add"] = product.Name + " has been added";
-                    context.Products.Add(product);
+                    data.Add(product);
                 }
                 else
                 {
                     TempData["updated"] = product.Name + " has been updated";
-                    context.Products.Update(product);
+                    data.Update(product);
                 }
 
                 var products = context.Products.OrderBy(c => c.ReleaseDate).ToList();

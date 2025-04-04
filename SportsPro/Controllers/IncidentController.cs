@@ -14,10 +14,9 @@ namespace SportsPro.Controllers
         private List<Customer> customers;
         private List<Product> products;
         private List<Technician> technicians;
+        private IRepository<Incident> data { get; set; }
 
-
-        public IncidentController(SportsProContext ctx)
-        {
+        public IncidentController(SportsProContext ctx, IRepository<Incident> rep) {
 
             context = ctx;
             customers = context.Customers
@@ -29,6 +28,7 @@ namespace SportsPro.Controllers
             technicians = context.Technicians
                     .OrderBy(c => c.TechnicianID)
                     .ToList();
+            data = rep;
         }
         [HttpGet]
         [Route("/incidents/{filter?}")]

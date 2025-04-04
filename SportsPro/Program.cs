@@ -23,5 +23,8 @@ namespace SportsPro
                     webBuilder.UseStartup<Startup>();
 
                 });
+
+     
+
     }
 }
