@@ -31,8 +31,8 @@ namespace SportsPro.Controllers
                     .ToList();
         }
         [HttpGet]
-        [Route("/incidents")]
-        public IActionResult List()
+        [Route("/incidents/{filter?}")]
+        public IActionResult List(string filter = "all")
         {
             int? technicianId = HttpContext.Session.GetInt32("TechnicianID");
 
@@ -41,9 +41,25 @@ namespace SportsPro.Controllers
                 HttpContext.Session.Remove("TechIncidentID");
             }
             var model = new IncidentListViewModel();
-            model.Incidents = context.Incidents
+
+            IQueryable<Incident> query = context.Incidents
                 .Include(i => i.Customer)
-                .Include(i => i.Product)
+                .Include(i => i.Product);
+
+            switch (filter.ToLower())
+            {
+                case "unassigned":
+                    query = query.Where(i => i.TechnicianID == null);
+                    break;
+                case "open":
+                    query = query.Where(i => i.DateClosed == null);
+                    break;
+                case "all":
+                default:
+                    break;
+            }
+
+            model.Incidents = query
                 .Select(i => new IncidentViewModel
                 {
                     IncidentID = i.IncidentID,
@@ -52,6 +68,9 @@ namespace SportsPro.Controllers
                     ProductName = i.Product.Name,
                     DateOpened = i.DateOpened
                 }).ToList();
+
+            model.Filter = filter;
+
             return View(model);
         }
 
