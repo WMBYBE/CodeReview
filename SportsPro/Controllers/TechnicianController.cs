@@ -82,7 +82,7 @@ namespace SportsPro.Controllers
             // Ensure the user is logged in
 
 
-            ValidateTechEditViewModel(model);
+            ValidateTechEditViewModel(model, technicianData);
 
             // Show the add form again if there were validation errors
             if (!ModelState.IsValid)
@@ -142,7 +142,7 @@ namespace SportsPro.Controllers
             model.Technician!.TechnicianID = tech.TechnicianID;
             model.Technician.Name = tech.Name;
 
-            ValidateTechEditViewModel(model);
+            ValidateTechEditViewModel(model, technicianData);
 
             // Show the edit form again if there were validation errors
             if (!ModelState.IsValid)
