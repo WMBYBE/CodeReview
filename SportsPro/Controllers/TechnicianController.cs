@@ -37,10 +37,10 @@ namespace SportsPro.Controllers
         }
 
         [NonAction]
-        private void ValidateTechEditViewModel(TechEditViewModel model)
+        private void ValidateTechEditViewModel(TechEditViewModel model, IRepository<Technician> techData)
         {
             // Ensure the tech name is unique
-            var tech = technicianData.GetAll()
+            var tech = techData.GetAll()
                 .Where(t => t.TechnicianID != model.Technician!.TechnicianID && t.Name == model.Technician.Name)
                 .FirstOrDefault();
       
