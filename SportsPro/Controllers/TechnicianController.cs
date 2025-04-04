@@ -8,30 +8,18 @@ namespace SportsPro.Controllers
 {
     public class TechnicianController : Controller
     {
-        private SportsProContext _context;
-        public TechnicianController(SportsProContext context)
+        private IRepository<Technician> technicianData { get; set; }
+
+        public TechnicianController(IRepository<Technician> rep)
         {
-            _context = context;
+            technicianData = rep;
         }
         [HttpGet]
         [Route("/technicians")]
         public IActionResult List()
         {
-            var techs = _context.Technicians.ToList();
+            var techs = technicianData.GetAll().ToList();
             return View(techs);
-        }
-
-
-        [NonAction]
-
-        // in NET 3.0 you can't use  _context.ChangeTracker.Clear(); 
-        // so this is a solution that works with older verions
-        public void ClearChangeTracker()
-        {
-            foreach (var entry in _context.ChangeTracker.Entries().ToList())
-            {
-                entry.State = EntityState.Detached;
-            }
         }
 
         [NonAction]
@@ -52,7 +40,7 @@ namespace SportsPro.Controllers
         private void ValidateTechEditViewModel(TechEditViewModel model)
         {
             // Ensure the tech name is unique
-            var tech = _context.Technicians
+            var tech = technicianData.GetAll()
                 .Where(t => t.TechnicianID != model.Technician!.TechnicianID && t.Name == model.Technician.Name)
                 .FirstOrDefault();
       
@@ -104,8 +92,8 @@ namespace SportsPro.Controllers
 
             // Add the tech
 
-            _context.Add(model.Technician);
-            _context.SaveChanges();
+            technicianData.Add(model.Technician);
+
 
             // Redirect to the tech manager page
             TempData["message"] = $"You just added the team {model.Technician.Name}.";
@@ -114,7 +102,16 @@ namespace SportsPro.Controllers
 
         [HttpGet]
         public ActionResult Edit(int id)
-        {
+        {            
+            var technician = technicianData.GetAll()
+               .FirstOrDefault(t => t.TechnicianID == id);
+
+
+            if (technician == null)
+            {
+                return NotFound();
+            }
+
             var model = new TechEditViewModel()
             {
                 Mode = "Edit",
@@ -123,15 +120,6 @@ namespace SportsPro.Controllers
 
 
 
-            // Ensure the team exists and is owned by the user
-            model.Technician = _context.Technicians
-                .Where(t => t.TechnicianID == id)
-                .FirstOrDefault();
-
-            if (model.Technician == null)
-            {
-                return NotFound();
-            }
 
             return View("Edit", model);
         }
@@ -142,10 +130,8 @@ namespace SportsPro.Controllers
 
 
             // Ensure the tech exists and is owned by the user
-            var tech = _context.Technicians
-                .Where(t => t.TechnicianID == id)
-                .FirstOrDefault();
-            ClearChangeTracker();
+            var tech = technicianData.GetAll()
+                         .FirstOrDefault(t => t.TechnicianID == id);
 
             if (tech == null)
             {
@@ -167,8 +153,8 @@ namespace SportsPro.Controllers
             }
 
             // Update the team
-            _context.Update(model.Technician);
-            _context.SaveChanges();
+            technicianData.Update(model.Technician);
+
 
             // Redirect to the user's teams page
             TempData["message"] = $"You just edited the team {model.Technician.Name}.";
@@ -183,9 +169,8 @@ namespace SportsPro.Controllers
 
 
             // Verify the character exists and is owned by the logged in user
-            model = _context.Technicians
-                .Where(c => c.TechnicianID == id)
-                .FirstOrDefault();
+            model = technicianData.GetAll()
+                .FirstOrDefault(t => t.TechnicianID == id);
 
             if (model == null)
             {
@@ -200,21 +185,17 @@ namespace SportsPro.Controllers
         {
 
             // Ensure the character exists and is owned by the logged in user
-            var Technician = _context.Technicians
-                .Where(c => c.TechnicianID == id)
-                .FirstOrDefault();
+            var Technician = technicianData.GetAll()
+                .FirstOrDefault(t => t.TechnicianID == id);
 
             if (Technician == null)
             {
                 return NotFound();
             }
 
-
-
             // Remove the character
-            _context.Remove(Technician);
-            _context.SaveChanges();
-
+            technicianData.Delete(id);
+            
             // Return to the user's character list page
             TempData["message"] = $"You just deleted the character {Technician.Name}.";
             return RedirectToAction("List", "Technician");
