@@ -14,6 +14,9 @@ namespace SportsPro.Controllers
         private readonly IRepository<Customer> customerData;
         private readonly IRepository<Product> productData;
         private readonly IRepository<Technician> technicianData;
+        private ISession session { get; set; }
+        private IRequestCookieCollection requestCookies { get; set; } 
+        private IResponseCookies responseCookies { get; set; }
 
         private List<Customer> customers;
         private List<Product> products;
@@ -23,13 +26,17 @@ namespace SportsPro.Controllers
             IRepository<Incident> incidentRep,
             IRepository<Customer> customerRep,
             IRepository<Product> productRep,
-            IRepository<Technician> technicianRep
+            IRepository<Technician> technicianRep,
+            IHttpContextAccessor ctx
             ) {
 
             incidentData = incidentRep;
             customerData = customerRep;
             productData = productRep;
             technicianData = technicianRep;
+            session = ctx.HttpContext!.Session;
+            requestCookies = ctx.HttpContext!.Request.Cookies; 
+            responseCookies = ctx.HttpContext!.Response.Cookies;
 
             customers = customerData.GetAll().OrderBy(c => c.CustomerID).ToList();
             products = productData.GetAll().OrderBy(p => p.ProductID).ToList();
@@ -39,11 +46,11 @@ namespace SportsPro.Controllers
         [Route("/incidents/{filter?}")]
         public IActionResult List(string filter = "all")
         {
-            int? technicianId = HttpContext.Session.GetInt32("TechnicianID");
+            int? technicianId = session.GetInt32("TechnicianID");
 
             if (technicianId.HasValue)
             {
-                HttpContext.Session.Remove("TechIncidentID");
+                session.Remove("TechIncidentID");
             }
             var model = new IncidentListViewModel();
 
@@ -126,7 +133,7 @@ namespace SportsPro.Controllers
                     incidentData.Update(incidents.Incident);
                 }
 
-                int? technicianId = HttpContext.Session.GetInt32("TechnicianID");
+                int? technicianId = session.GetInt32("TechnicianID");
                 
                 if (technicianId.HasValue)
                 {
@@ -202,11 +209,11 @@ namespace SportsPro.Controllers
         }
         [HttpPost]
         public ActionResult ListByTech(TechIncidentViewModel model) {
-            int? technicianId = HttpContext.Session.GetInt32("TechnicianID");
+            int? technicianId = session.GetInt32("TechnicianID");
 
             if (technicianId.HasValue)
             {
-                HttpContext.Session.Remove("TechIncidentID");
+                session.Remove("TechIncidentID");
             }
 
 

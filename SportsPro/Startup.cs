@@ -23,6 +23,8 @@ namespace SportsPro
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddHttpContextAccessor();
+
             services.AddControllersWithViews();
             services.AddMemoryCache();
             services.AddSession();
