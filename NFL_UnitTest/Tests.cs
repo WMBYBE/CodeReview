@@ -78,7 +78,8 @@ namespace NFL_UnitTest {
             MockTechnicianRepo.Setup(repo => repo.GetAll()).Returns(Technicians);
 
             var mockSession = new Mock<ISession>();
-            mockSession.Setup(s => s.GetInt32("TechnicianID")).Returns((int?)null);
+            mockSession.Setup(s => s.TryGetValue("TechnicianID", out It.Ref<byte[]>.IsAny)).Returns(false);
+
             mockSession.Setup(s => s.Remove(It.IsAny<string>()));
 
             var mockHttpContext = new Mock<HttpContext>();
@@ -201,6 +202,7 @@ namespace NFL_UnitTest {
         public void Edit_Post_Action_Valid_ExistingIncident_Test() {
             // Arrange: use an existing incident (non-zero ProductID).
             var existingIncident = Incidents.First();
+            existingIncident.ProductID = 1;
             existingIncident.Product = new Product { ProductID = 1 }; // non-zero
             Controller.ModelState.Clear();
 
@@ -315,10 +317,18 @@ namespace NFL_UnitTest {
 
             // Simulate session contains the TechnicianID.
             var mockSession = new Mock<ISession>();
-            mockSession.Setup(s => s.GetInt32("TechnicianID")).Returns(selectedTech.TechnicianID);
+            byte[] techIdBytes = BitConverter.GetBytes(selectedTech.TechnicianID);
+            mockSession.Setup(s => s.TryGetValue("TechnicianID", out techIdBytes)).Returns(true);
             mockSession.Setup(s => s.Remove(It.IsAny<string>()));
             var mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.Setup(ctx => ctx.Session).Returns(mockSession.Object);
+
+            var dummyRequestCookies = new Mock<IRequestCookieCollection>().Object;
+            var dummyResponseCookies = new Mock<IResponseCookies>().Object;
+            mockHttpContext.Setup(ctx => ctx.Request.Cookies).Returns(dummyRequestCookies);
+            mockHttpContext.Setup(ctx => ctx.Response.Cookies).Returns(dummyResponseCookies);
+
+            var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             MockHttpContextAccessor.Setup(acc => acc.HttpContext).Returns(mockHttpContext.Object);
 
             // Reinitialize Controller to pick up new HttpContext.
@@ -331,7 +341,7 @@ namespace NFL_UnitTest {
             );
 
             // Act
-            var result = Controller.ListByTech(selectedTech.TechnicianID);
+            var result = Controller.ListByTech(techModel);
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
