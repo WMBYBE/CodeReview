@@ -188,7 +188,92 @@ namespace NFL_UnitTest {
             Assert.NotNull(viewBagCountries);
             Assert.Single(viewBagCountries);
         }
+        [Fact]
+        public void Edit_Post_Action_New_Customer_Test() {
 
+            // Arrange: Create a new customer (CustomerID == 0).
+            var newCustomer = new Customer { CustomerID = 0, FirstName = "New", LastName = "Customer" };
+
+            // Ensure model state is valid.
+            Controller.ModelState.Clear();
+
+            // Act
+            var result = Controller.Edit(newCustomer);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("List", redirectResult.ActionName);
+            // Verify that the repository's Add method was called.
+            MockCustomerRepo.Verify(repo => repo.Add(newCustomer), Times.Once);
+        }
+        [Fact]
+        public void Edit_Post_Action_Existing_Customer_Test() {
+            // Arrange: Use an existing customer (CustomerID != 0).
+            var existingCustomer = Customers.First(c => c.CustomerID == 1);
+            existingCustomer.FirstName = "Updated";
+            Controller.ModelState.Clear();
+
+            // Act
+            var result = Controller.Edit(existingCustomer);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("List", redirectResult.ActionName);
+            // Verify that the repository's Update method was called.
+            MockCustomerRepo.Verify(repo => repo.Update(existingCustomer), Times.Once);
+        }
+        [Fact]
+        public void Edit_Post_Action_InvalidModelState_Test() {
+            // Arrange: Create a customer and add an error to the ModelState.
+            var customer = new Customer { CustomerID = 1, FirstName = "Invalid", LastName = "Test" };
+            Controller.ModelState.AddModelError("error", "error message");
+
+            // Act
+            var result = Controller.Edit(customer);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsAssignableFrom<Customer>(viewResult.Model);
+            Assert.Equal(customer.CustomerID, model.CustomerID);
+            // For an existing customer, the ViewBag.Action should be "Edit".
+            Assert.Equal("Edit", Controller.ViewBag.Action);
+            // Ensure that ViewBag.Countries is set.
+            var viewBagCountries = Controller.ViewBag.Countries as List<Country>;
+            Assert.NotNull(viewBagCountries);
+            Assert.Equal(2, viewBagCountries.Count);
+        }
+        [Fact]
+        public void Delete_Get_Action_Test() {
+            // Act
+            var result = Controller.Delete(1);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsAssignableFrom<Customer>(viewResult.Model);
+            Assert.Equal(1, model.CustomerID);
+            // Check that ViewBag.Action is set to "Delete".
+            Assert.Equal("Delete", Controller.ViewBag.Action);
+        }
+        [Fact]
+        public void Delete_Post_Action_Test() {
+
+            var customerToDelete = Customers.First(c => c.CustomerID == 1);
+
+            var remainingCustomers = Customers.Where(c => c.CustomerID != 1).ToList();
+            MockCustomerRepo.Setup(repo => repo.GetAll()).Returns(remainingCustomers);
+
+            // Act
+            var result = Controller.Delete(customerToDelete);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            // The POST Delete returns the "list" view.
+            Assert.Equal("list", viewResult.ViewName.ToLower());
+            var model = Assert.IsAssignableFrom<List<Customer>>(viewResult.Model);
+            Assert.Equal(remainingCustomers.Count, model.Count);
+            // Verify that Delete was called.
+            MockCustomerRepo.Verify(repo => repo.Delete(customerToDelete.CustomerID), Times.Once);
+        }
 
     }
     public class Product_Controller_Tests {
