@@ -675,4 +675,35 @@ namespace NFL_UnitTest {
 
 
     }
+    public class Technician_Controller_Tests {
+        public List<Technician> Technicians { get; set; }
+        public Mock<IRepository<Technician>> MockTechnicianRepo { get; set; }
+        public TechnicianController Controller { get; set; }
+        public Technician_Controller_Tests() {
+            // Initialize dummy technician data.
+            Technicians = new List<Technician>
+            {
+                new Technician { TechnicianID = 1, Name = "Tech One", Email = "tech1@example.com", Phone = "123-456-7890" },
+                new Technician { TechnicianID = 2, Name = "Tech Two", Email = "tech2@example.com", Phone = "234-567-8901" }
+            };
+
+            // Set up repository mock.
+            MockTechnicianRepo = new Mock<IRepository<Technician>>();
+            MockTechnicianRepo.Setup(repo => repo.GetAll()).Returns(Technicians);
+            MockTechnicianRepo.Setup(repo => repo.GetById(1)).Returns(Technicians.First(t => t.TechnicianID == 1));
+
+            // Initialize the controller.
+            Controller = new TechnicianController(MockTechnicianRepo.Object);
+        }
+        [Fact]
+        public void List_Action_Test() {
+            // Act
+            var result = Controller.List();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsAssignableFrom<List<Technician>>(viewResult.Model);
+            Assert.Equal(Technicians.Count, model.Count);
+        }
+    }
 }
