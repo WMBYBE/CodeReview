@@ -532,95 +532,121 @@ namespace NFL_UnitTest {
 
     }
     public class Product_Controller_Tests {
-        [Fact]
-        public void List_Returns_ViewResult_With_Product_List() {
-            // Arrange
-            var products = new List<Product>
+        public List<Product> Products { get; set; }
+        public Mock<IRepository<Product>> MockProductRepo { get; set; }
+        public ProductController Controller { get; set; }
+
+        // Constructor: common initialization.
+        public Product_Controller_Tests() {
+            // Create dummy product data.
+            Products = new List<Product>
             {
                 new Product { ProductID = 1, Name = "Product A", ReleaseDate = new DateTime(2020, 1, 1) },
                 new Product { ProductID = 2, Name = "Product B", ReleaseDate = new DateTime(2021, 1, 1) }
             };
 
-            var mockRepo = new Mock<IRepository<Product>>();
-            mockRepo.Setup(r => r.GetAll()).Returns(products);
+            // Set up repository mock.
+            MockProductRepo = new Mock<IRepository<Product>>();
+            MockProductRepo.Setup(repo => repo.GetAll()).Returns(Products);
+            // For the GET Edit action.
+            MockProductRepo.Setup(repo => repo.GetById(1)).Returns(Products.First());
 
-            var controller = new ProductController(mockRepo.Object);
+            // Initialize the controller.
+            Controller = new ProductController(MockProductRepo.Object);
+        }
 
+        [Fact]
+        public void List_Action_Test() {
             // Act
-            var result = controller.List();
+            var result = Controller.List();
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsAssignableFrom<List<Product>>(viewResult.Model);
-            Assert.Equal(2, model.Count);
-            Assert.Equal("Product A", model.First().Name);
+            // Ensure the product list is sorted by ReleaseDate.
+            var expectedOrder = Products.OrderBy(p => p.ReleaseDate).ToList();
+            Assert.Equal(expectedOrder.Select(p => p.ProductID), model.Select(p => p.ProductID));
         }
 
         [Fact]
-        public void Add_Returns_AddEdit_View_With_New_Product() {
-            // Arrange
-            var mockRepo = new Mock<IRepository<Product>>();
-            var controller = new ProductController(mockRepo.Object);
-
+        public void Add_Action_Test() {
             // Act
-            var result = controller.Add();
+            var result = Controller.Add();
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
+            // The Add action returns the "AddEdit" view.
             Assert.Equal("AddEdit", viewResult.ViewName);
             var model = Assert.IsAssignableFrom<Product>(viewResult.Model);
+            // A new Product should have a default ID (0).
             Assert.Equal(0, model.ProductID);
-            Assert.Equal("Add", controller.ViewBag.Action);
+            // Verify ViewBag.Action is set to "Add".
+            Assert.Equal("Add", Controller.ViewBag.Action);
         }
 
         [Fact]
-        public void Edit_Get_Returns_AddEdit_View_With_Product() {
-            // Arrange
-            var product = new Product { ProductID = 1, Name = "Product A", ReleaseDate = new DateTime(2020, 1, 1) };
-            var mockRepo = new Mock<IRepository<Product>>();
-            mockRepo.Setup(r => r.GetById(1)).Returns(product);
-
-            var controller = new ProductController(mockRepo.Object);
-
-            // Act
-            var result = controller.Edit(1);
+        public void Edit_Get_Action_Test() {
+            // Act: Call GET Edit for ProductID 1.
+            var result = Controller.Edit(1);
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
+            // The GET Edit action returns the "AddEdit" view.
             Assert.Equal("AddEdit", viewResult.ViewName);
             var model = Assert.IsAssignableFrom<Product>(viewResult.Model);
             Assert.Equal(1, model.ProductID);
-            Assert.Equal("Edit", controller.ViewBag.Action);
+            // Verify ViewBag.Action is set to "Edit".
+            Assert.Equal("Edit", Controller.ViewBag.Action);
         }
 
         [Fact]
-        public void Edit_Post_Redirects_To_List_When_ModelState_Is_Valid() {
-            // Arrange
-            var product = new Product { ProductID = 0, Name = "New Product", ReleaseDate = new DateTime(2022, 1, 1) };
-            var mockRepo = new Mock<IRepository<Product>>();
-            // Setup repository Add as a no-op.
-            mockRepo.Setup(r => r.Add(product));
-            var controller = new ProductController(mockRepo.Object);
-            controller.ModelState.Clear(); // Ensure ModelState is valid
+        public void Edit_Post_Action_Valid_NewProduct_Test() {
+            // Arrange: create a new product (ProductID == 0).
+            var newProduct = new Product { ProductID = 0, Name = "New Product", ReleaseDate = new DateTime(2022, 1, 1) };
+            Controller.ModelState.Clear(); // Ensure ModelState is valid.
 
-            // Act
-            var result = controller.Edit(product);
+            // Act: call the POST Edit action.
+            var result = Controller.Edit(newProduct);
 
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("List", redirectResult.ActionName);
+            // Verify that Add was called.
+            MockProductRepo.Verify(repo => repo.Add(newProduct), Times.Once);
         }
 
         [Fact]
-        public void Delete_Get_Returns_View_With_Product() {
-            // Arrange
-            var product = new Product { ProductID = 1, Name = "Product A", ReleaseDate = new DateTime(2020, 1, 1) };
-            var mockRepo = new Mock<IRepository<Product>>();
-            mockRepo.Setup(r => r.GetById(1)).Returns(product);
-            var controller = new ProductController(mockRepo.Object);
+        public void Edit_Post_Action_Valid_ExistingProduct_Test() {
+            // Arrange: use an existing product (ProductID != 0).
+            var existingProduct = Products.First();
+            existingProduct.Name = "Updated Product";
+            Controller.ModelState.Clear();
 
-            // Act
-            var result = controller.Delete(1);
+            // Act: call the POST Edit action.
+            var result = Controller.Edit(existingProduct);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("List", redirectResult.ActionName);
+            // Verify that Update was called.
+            MockProductRepo.Verify(repo => repo.Update(existingProduct), Times.Once);
+        }
+
+        [Fact]
+        public void Edit_Post_InvalidModelState_Test() {
+            // Arrange: create a product with an invalid model state.
+            var product = new Product { ProductID = 1, Name = "Invalid", ReleaseDate = new DateTime(2020, 1, 1) };
+            Controller.ModelState.AddModelError("error", "Invalid model");
+
+            // Act: call the POST Edit action.
+            var result = Controller.Edit(product);
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        }
+
+        [Fact]
+        public void Delete_Get_Action_Test() {
+            // Act: Call GET Delete for ProductID 1.
+            var result = Controller.Delete(1);
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
@@ -629,19 +655,20 @@ namespace NFL_UnitTest {
         }
 
         [Fact]
-        public void Delete_Post_Redirects_To_List() {
-            // Arrange
-            var product = new Product { ProductID = 1, Name = "Product A", ReleaseDate = new DateTime(2020, 1, 1) };
-            var mockRepo = new Mock<IRepository<Product>>();
-            mockRepo.Setup(r => r.Delete(product.ProductID));
-            var controller = new ProductController(mockRepo.Object);
+        public void Delete_Post_Action_Test() {
+            // Arrange: select a product to delete.
+            var productToDelete = Products.First();
 
-            // Act
-            var result = controller.Delete(product);
+            // Act: call the POST Delete action.
+            var result = Controller.Delete(productToDelete);
 
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("List", redirectResult.ActionName);
+            // Verify that Delete was called.
+            MockProductRepo.Verify(repo => repo.Delete(productToDelete.ProductID), Times.Once);
         }
+
+
     }
 }
