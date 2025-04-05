@@ -144,6 +144,201 @@ namespace NFL_UnitTest {
             Assert.Single(model.Incidents);
         }
 
+        [Fact]
+        public void Add_Action_Test() {
+            // Act
+            var result = Controller.Add();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal("AddEdit", viewResult.ViewName);
+            var model = Assert.IsAssignableFrom<IncidentEditViewModel>(viewResult.Model);
+            Assert.Equal("Add", model.Mode);
+            Assert.NotNull(model.Incident);
+            Assert.NotNull(model.Customers);
+            Assert.NotNull(model.Products);
+            Assert.NotNull(model.Technicians);
+        }
+        [Fact]
+        public void Edit_Get_Action_Test() {
+            // Act
+            var result = Controller.Edit(1);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal("AddEdit", viewResult.ViewName);
+            var model = Assert.IsAssignableFrom<IncidentEditViewModel>(viewResult.Model);
+            Assert.Equal("Edit", model.Mode);
+            Assert.NotNull(model.Incident);
+            Assert.Equal(1, model.Incident.IncidentID);
+        }
+        [Fact]
+        public void Edit_Post_Action_Valid_NewIncident_Test() {
+            // Arrange: create a new incident with ProductID == 0.
+            var newIncident = new Incident { IncidentID = 0, Product = new Product { ProductID = 0 } };
+            Controller.ModelState.Clear();
+
+            var editModel = new IncidentEditViewModel
+            {
+                Mode = "Add",
+                Incident = newIncident,
+                Customers = Customers,
+                Products = Products,
+                Technicians = Technicians
+            };
+
+            // Act
+            var result = Controller.Edit(editModel);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("List", redirectResult.ActionName);
+            // Verify Add was called.
+            MockIncidentRepo.Verify(repo => repo.Add(newIncident), Times.Once);
+        }
+
+        [Fact]
+        public void Edit_Post_Action_Valid_ExistingIncident_Test() {
+            // Arrange: use an existing incident (non-zero ProductID).
+            var existingIncident = Incidents.First();
+            existingIncident.Product = new Product { ProductID = 1 }; // non-zero
+            Controller.ModelState.Clear();
+
+            var editModel = new IncidentEditViewModel
+            {
+                Mode = "Edit",
+                Incident = existingIncident,
+                Customers = Customers,
+                Products = Products,
+                Technicians = Technicians
+            };
+
+            // Act
+            var result = Controller.Edit(editModel);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("List", redirectResult.ActionName);
+            // Verify Update was called.
+            MockIncidentRepo.Verify(repo => repo.Update(existingIncident), Times.Once);
+        }
+        [Fact]
+        public void Edit_Post_Action_InvalidModel_Test() {
+            // Arrange: add error to ModelState.
+            var incident = Incidents.First();
+            Controller.ModelState.AddModelError("error", "Invalid");
+
+            var editModel = new IncidentEditViewModel
+            {
+                Mode = "Edit",
+                Incident = incident,
+                Customers = Customers,
+                Products = Products,
+                Technicians = Technicians
+            };
+
+            // Act
+            var result = Controller.Edit(editModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsAssignableFrom<IncidentEditViewModel>(viewResult.Model);
+            // For an invalid model, Mode should be set to "Save".
+            Assert.Equal("Save", model.Mode);
+        }
+        [Fact]
+        public void Delete_Get_Action_Test() {
+            // Act
+            var result = Controller.Delete(1);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsAssignableFrom<Incident>(viewResult.Model);
+            Assert.Equal(1, model.IncidentID);
+        }
+
+        [Fact]
+        public void Delete_Post_Action_Test() {
+            // Arrange: select an incident to delete.
+            var incidentToDelete = Incidents.First();
+
+            // Act
+            var result = Controller.Delete(incidentToDelete);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("List", redirectResult.ActionName);
+            // Verify that Delete was called.
+            MockIncidentRepo.Verify(repo => repo.Delete(incidentToDelete.IncidentID), Times.Once);
+        }
+        [Fact]
+        public void SelectTech_Action_Test() {
+            // Act
+            var result = Controller.SelectTech();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal("TechIncident", viewResult.ViewName);
+            var model = Assert.IsAssignableFrom<TechIncidentViewModel>(viewResult.Model);
+            Assert.NotEmpty(model.Technicians);
+            Assert.NotEmpty(model.Incidents);
+        }
+        [Fact]
+        public void ListByTech_Get_Action_Test() {
+            // Arrange: simulate that all incidents are assigned to technician with ID 1 and are open.
+            foreach (var inc in Incidents)
+            {
+                inc.TechnicianID = 1;
+                inc.DateClosed = null;
+            }
+
+            // Act
+            var result = Controller.ListByTech(1);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal("TechIncidentList", viewResult.ViewName);
+            var model = Assert.IsAssignableFrom<TechIncidentViewModel>(viewResult.Model);
+            // In our dummy model, SelectedTech is newly created in the action, so check that Incidents are filtered.
+            Assert.NotEmpty(model.Incidents);
+        }
+        [Fact]
+        public void ListByTech_Post_Action_Test() {
+            // Arrange: create a TechIncidentViewModel with a selected technician.
+            var selectedTech = Technicians.First();
+            var techModel = new TechIncidentViewModel
+            {
+                SelectedTech = selectedTech,
+                Incidents = Incidents.Where(i => i.TechnicianID == selectedTech.TechnicianID && i.DateClosed == null).ToList(),
+                Technicians = Technicians
+            };
+
+            // Simulate session contains the TechnicianID.
+            var mockSession = new Mock<ISession>();
+            mockSession.Setup(s => s.GetInt32("TechnicianID")).Returns(selectedTech.TechnicianID);
+            mockSession.Setup(s => s.Remove(It.IsAny<string>()));
+            var mockHttpContext = new Mock<HttpContext>();
+            mockHttpContext.Setup(ctx => ctx.Session).Returns(mockSession.Object);
+            MockHttpContextAccessor.Setup(acc => acc.HttpContext).Returns(mockHttpContext.Object);
+
+            // Reinitialize Controller to pick up new HttpContext.
+            Controller = new IncidentController(
+                MockIncidentRepo.Object,
+                MockCustomerRepo.Object,
+                MockProductRepo.Object,
+                MockTechnicianRepo.Object,
+                MockHttpContextAccessor.Object
+            );
+
+            // Act
+            var result = Controller.ListByTech(selectedTech.TechnicianID);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal("TechIncidentList", viewResult.ViewName);
+            var model = Assert.IsAssignableFrom<TechIncidentViewModel>(viewResult.Model);
+            Assert.Equal(selectedTech.TechnicianID, model.SelectedTech.TechnicianID);
+        }
     }
     public class Customer_Controller_ControllerTests {
         public List<Customer> Customers { get; set; }
