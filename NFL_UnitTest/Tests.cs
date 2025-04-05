@@ -606,6 +606,7 @@ namespace NFL_UnitTest {
             // Arrange: create a new product (ProductID == 0).
             var newProduct = new Product { ProductID = 0, Name = "New Product", ReleaseDate = new DateTime(2022, 1, 1) };
             Controller.ModelState.Clear(); // Ensure ModelState is valid.
+            Controller.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
 
             // Act: call the POST Edit action.
             var result = Controller.Edit(newProduct);
@@ -623,6 +624,7 @@ namespace NFL_UnitTest {
             var existingProduct = Products.First();
             existingProduct.Name = "Updated Product";
             Controller.ModelState.Clear();
+            Controller.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
 
             // Act: call the POST Edit action.
             var result = Controller.Edit(existingProduct);
