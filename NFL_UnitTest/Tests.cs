@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using Moq.EntityFrameworkCore;
 
@@ -548,11 +549,12 @@ namespace NFL_UnitTest {
             // Set up repository mock.
             MockProductRepo = new Mock<IRepository<Product>>();
             MockProductRepo.Setup(repo => repo.GetAll()).Returns(Products);
-            // For the GET Edit action.
             MockProductRepo.Setup(repo => repo.GetById(1)).Returns(Products.First());
 
             // Initialize the controller.
             Controller = new ProductController(MockProductRepo.Object);
+            Controller.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
+
         }
 
         [Fact]
