@@ -9,7 +9,7 @@ using SportsPro.Models;
 namespace NFL_UnitTest {
     public class Incident_Controller_ControllerTests {
         [Fact]
-        public void List_Returns_ViewResult_With_Filtered_Customer_List() {
+        public void List_Action_Test() {
             // Arrange
 
             // Create dummy data for repositories.
@@ -96,34 +96,43 @@ namespace NFL_UnitTest {
         }
     }
     public class Customer_Controller_ControllerTests {
-
-        [Fact]
-        public void List_Action_Tests() {
-            // Arrange
-            var customers = new List<Customer>
+        public List<Customer> Customers { get; set; }
+        public List<Country> Countries { get; set; }
+        public Mock<IRepository<Customer>> MockCustomerRepo { get; set; }
+        public Mock<IRepository<Country>> MockCountryRepo { get; set; }
+        public CustomerController Controller { get; set; }
+        public Customer_Controller_ControllerTests() {
+            // Set up common dummy data.
+            Customers = new List<Customer>
             {
                 new Customer { CustomerID = 1, FirstName = "John", LastName = "Doe" },
                 new Customer { CustomerID = 2, FirstName = "John", LastName = "Doe" }
             };
 
-            var countries = new List<Country>
+            Countries = new List<Country>
             {
                 new Country { CountryID = "USA", Name = "United States of America" },
                 new Country { CountryID = "CA", Name = "Canada" }
             };
 
-            // Create a mock context and set up its DbSet properties.
-            var mockContext = new Mock<SportsProContext>();
-            mockContext.Setup(c => c.Customers).ReturnsDbSet(customers);
-            mockContext.Setup(c => c.Countries).ReturnsDbSet(countries);
+            // Set up repository mocks.
+            MockCustomerRepo = new Mock<IRepository<Customer>>();
+            MockCustomerRepo.Setup(repo => repo.GetAll()).Returns(Customers);
+            // For the Edit action, GetById(1) should return the first customer.
+            MockCustomerRepo.Setup(repo => repo.GetById(1)).Returns(Customers[0]);
 
-            // The repository is not used in these actions, but is required by the constructor.
-            var mockRepo = new Mock<IRepository<Customer>>();
+            MockCountryRepo = new Mock<IRepository<Country>>();
+            MockCountryRepo.Setup(repo => repo.GetAll()).Returns(Countries);
 
-            var controller = new CustomerController(mockContext.Object, mockRepo.Object);
+            // Initialize the controller with the mocks.
+            Controller = new CustomerController(MockCustomerRepo.Object, MockCountryRepo.Object);
+        }
+
+        [Fact]
+        public void List_Action_Tests() {
 
             // Act
-            var result = controller.List();
+            var result = Controller.List();
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
@@ -132,26 +141,15 @@ namespace NFL_UnitTest {
         }
 
         [Fact]
-        public void Add_Returns_Edit_View_With_New_Customer_And_Countries() {
+        public void Add_Action_Test() {
             // Arrange
-            var customers = new List<Customer>(); // empty customer list
-            var countries = new List<Country>
-            {
-                new Country { CountryID = "USA", Name = "United States of America" },
-                new Country { CountryID = "CA", Name = "Canada" }
-            };
+            Customers.Clear();
+            MockCustomerRepo.Setup(repo => repo.GetAll()).Returns(Customers);
 
-
-            var mockCountryRepo = new Mock<IRepository<Country>>();
-            mockCountryRepo.Setup(repo => repo.GetAll()).Returns(countries);
-
-            var mockCustomerRepo = new Mock<IRepository<Customer>>();
-            mockCustomerRepo.Setup(repo => repo.GetAll()).Returns(customers);
-
-            var controller = new CustomerController(mockContext.Object, mockCustomerRepo.Object);
+            Controller = new CustomerController(MockCustomerRepo.Object, MockCountryRepo.Object);
 
             // Act
-            var result = controller.Add();
+            var result = Controller.Add();
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
@@ -160,39 +158,33 @@ namespace NFL_UnitTest {
             var model = Assert.IsAssignableFrom<Customer>(viewResult.Model);
             Assert.Equal(0, model.CustomerID);
             // Check that ViewBag.Countries contains our countries.
-            var viewBagCountries = controller.ViewBag.Countries as List<Country>;
+            var viewBagCountries = Controller.ViewBag.Countries as List<Country>;
             Assert.NotNull(viewBagCountries);
             Assert.Equal(2, viewBagCountries.Count);
         }
 
         [Fact]
-         public void Edit_Get_Returns_Edit_View_With_Customer() {
-            // Arrange
-            var customer = new Customer { CustomerID = 1, FirstName = "John", LastName = "Doe" };
-            var customers = new List<Customer> { customer };
-            var countries = new List<Country>
+         public void Edit_Get_Action_Test() {
+            Countries = new List<Country>
             {
                 new Country { CountryID = "USA", Name = "United States of America" }
             };
+            MockCountryRepo.Setup(repo => repo.GetAll()).Returns(Countries);
 
-            var mockContext = new Mock<SportsProContext>();
-            mockContext.Setup(c => c.Customers).ReturnsDbSet(customers);
-            mockContext.Setup(c => c.Countries).ReturnsDbSet(countries);
+            Controller = new CustomerController(MockCustomerRepo.Object, MockCountryRepo.Object);
 
-            var mockRepo = new Mock<IRepository<Customer>>();
-            var controller = new CustomerController(mockContext.Object, mockRepo.Object);
 
             // Act
-            var result = controller.Edit(1);
+            var result = Controller.Edit(1);
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsAssignableFrom<Customer>(viewResult.Model);
             Assert.Equal(1, model.CustomerID);
             // Check ViewBag.Action
-            Assert.Equal("Edit", controller.ViewBag.Action);
+            Assert.Equal("Edit", Controller.ViewBag.Action);
             // Ensure that ViewBag.Countries is set.
-            var viewBagCountries = controller.ViewBag.Countries as List<Country>;
+            var viewBagCountries = Controller.ViewBag.Countries as List<Country>;
             Assert.NotNull(viewBagCountries);
             Assert.Single(viewBagCountries);
         }
