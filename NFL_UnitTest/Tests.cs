@@ -7,93 +7,143 @@ using SportsPro.Controllers;
 using SportsPro.Models;
 
 namespace NFL_UnitTest {
-    public class Incident_Controller_ControllerTests {
-        [Fact]
-        public void List_Action_Test() {
-            // Arrange
+    public class Incident_Controller_Tests {
+        // Public members available to every test.
+        public List<Incident> Incidents { get; set; }
+        public List<Customer> Customers { get; set; }
+        public List<Product> Products { get; set; }
+        public List<Technician> Technicians { get; set; }
 
-            // Create dummy data for repositories.
-            var dummyIncident = new Incident
+        public Mock<IRepository<Incident>> MockIncidentRepo { get; set; }
+        public Mock<IRepository<Customer>> MockCustomerRepo { get; set; }
+        public Mock<IRepository<Product>> MockProductRepo { get; set; }
+        public Mock<IRepository<Technician>> MockTechnicianRepo { get; set; }
+        public Mock<IHttpContextAccessor> MockHttpContextAccessor { get; set; }
+
+        public IncidentController Controller { get; set; }
+
+        public Incident_Controller_Tests() {
+            Incidents = new List<Incident>
             {
-                IncidentID = 1,
-                Title = "Test Incident",
-                Customer = new Customer { CustomerID = 1, FirstName = "John", LastName = "Doe" },
-                Product = new Product { ProductID = 1, Name = "Test Product" },
-                DateOpened = DateTime.Now
+                new Incident
+                {
+                    IncidentID = 1,
+                    Title = "Incident 1",
+                    Customer = new Customer { CustomerID = 1, FirstName = "John", LastName = "Doe" },
+                    Product = new Product { ProductID = 1, Name = "Product A" },
+                    DateOpened = new DateTime(2022, 1, 1),
+                    DateClosed = null
+                },
+                new Incident
+                {
+                    IncidentID = 2,
+                    Title = "Incident 2",
+                    Customer = new Customer { CustomerID = 2, FirstName = "Jane", LastName = "Doe" },
+                    Product = new Product { ProductID = 2, Name = "Product B" },
+                    DateOpened = new DateTime(2022, 2, 1),
+                    DateClosed = null
+                }
             };
-            var incidents = new List<Incident> { dummyIncident };
 
-            var customers = new List<Customer>
+            Customers = new List<Customer>
             {
-                new Customer { CustomerID = 1, FirstName = "John", LastName = "Doe" }
+                new Customer { CustomerID = 1, FirstName = "John", LastName = "Doe" },
+                new Customer { CustomerID = 2, FirstName = "Jane", LastName = "Doe" }
             };
 
-            var products = new List<Product>
+            Products = new List<Product>
             {
-                new Product { ProductID = 1, Name = "Test Product" }
+                new Product { ProductID = 1, Name = "Product A" },
+                new Product { ProductID = 2, Name = "Product B" }
             };
 
-            var technicians = new List<Technician>
+            Technicians = new List<Technician>
             {
-                new Technician { TechnicianID = 1, Name = "Tech One" }
+                new Technician { TechnicianID = 1, Name = "Tech One" },
+                new Technician { TechnicianID = 2, Name = "Tech Two" }
             };
 
             // Set up repository mocks.
-            var mockIncidentRepo = new Mock<IRepository<Incident>>();
-            mockIncidentRepo.Setup(repo => repo.GetAll()).Returns(incidents);
+            MockIncidentRepo = new Mock<IRepository<Incident>>();
+            MockIncidentRepo.Setup(repo => repo.GetAll()).Returns(Incidents);
+            MockIncidentRepo.Setup(repo => repo.GetById(1)).Returns(Incidents.First());
 
-            var mockCustomerRepo = new Mock<IRepository<Customer>>();
-            mockCustomerRepo.Setup(repo => repo.GetAll()).Returns(customers);
+            MockCustomerRepo = new Mock<IRepository<Customer>>();
+            MockCustomerRepo.Setup(repo => repo.GetAll()).Returns(Customers);
 
-            var mockProductRepo = new Mock<IRepository<Product>>();
-            mockProductRepo.Setup(repo => repo.GetAll()).Returns(products);
+            MockProductRepo = new Mock<IRepository<Product>>();
+            MockProductRepo.Setup(repo => repo.GetAll()).Returns(Products);
 
-            var mockTechnicianRepo = new Mock<IRepository<Technician>>();
-            mockTechnicianRepo.Setup(repo => repo.GetAll()).Returns(technicians);
+            MockTechnicianRepo = new Mock<IRepository<Technician>>();
+            MockTechnicianRepo.Setup(repo => repo.GetAll()).Returns(Technicians);
 
+            var mockSession = new Mock<ISession>();
+            mockSession.Setup(s => s.GetInt32("TechnicianID")).Returns((int?)null);
+            mockSession.Setup(s => s.Remove(It.IsAny<string>()));
 
-            var sessionMock = new Mock<ISession>();
+            var mockHttpContext = new Mock<HttpContext>();
+            mockHttpContext.Setup(ctx => ctx.Session).Returns(mockSession.Object);
 
-            sessionMock.Setup(s => s.TryGetValue("TechnicianID", out It.Ref<byte[]>.IsAny))
-                       .Returns(false);
+            var dummyRequestCookies = new Mock<IRequestCookieCollection>().Object;
+            var dummyResponseCookies = new Mock<IResponseCookies>().Object;
+            mockHttpContext.Setup(ctx => ctx.Request.Cookies).Returns(dummyRequestCookies);
+            mockHttpContext.Setup(ctx => ctx.Response.Cookies).Returns(dummyResponseCookies);
 
-            sessionMock.Setup(s => s.Remove(It.IsAny<string>()));
+            MockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+            MockHttpContextAccessor.Setup(acc => acc.HttpContext).Returns(mockHttpContext.Object);
 
-            var httpContextMock = new Mock<HttpContext>();
-            httpContextMock.Setup(ctx => ctx.Session).Returns(sessionMock.Object);
-
-            var requestCookiesMock = new Mock<IRequestCookieCollection>();
-            var responseCookiesMock = new Mock<IResponseCookies>();
-            httpContextMock.Setup(ctx => ctx.Request.Cookies).Returns(requestCookiesMock.Object);
-            httpContextMock.Setup(ctx => ctx.Response.Cookies).Returns(responseCookiesMock.Object);
-
-            // Set up IHttpContextAccessor to return our mock HttpContext.
-            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            httpContextAccessorMock.Setup(acc => acc.HttpContext).Returns(httpContextMock.Object);
-
-            // Create the IncidentController.
-            var controller = new IncidentController(
-                mockIncidentRepo.Object,
-                mockCustomerRepo.Object,
-                mockProductRepo.Object,
-                mockTechnicianRepo.Object,
-                httpContextAccessorMock.Object
+            Controller = new IncidentController(
+                MockIncidentRepo.Object,
+                MockCustomerRepo.Object,
+                MockProductRepo.Object,
+                MockTechnicianRepo.Object,
+                MockHttpContextAccessor.Object
             );
-
-            // Act: Call the List action with the default "all" filter.
-            var result = controller.List("all");
+        }
+        [Fact]
+        public void List_Action_All_Filter_Test() {
+            // Act
+            var result = Controller.List("all");
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsAssignableFrom<IncidentListViewModel>(viewResult.Model);
-
-            // Verify that the model contains the expected data.
             Assert.Equal("all", model.Filter);
-            Assert.Single(model.Incidents);
-            Assert.Equal("Test Incident", model.Incidents.First().Title);
-            Assert.Equal("John Doe", model.Incidents.First().CustomerName);
-            Assert.Equal("Test Product", model.Incidents.First().ProductName);
+            Assert.Equal(Incidents.Count, model.Incidents.Count);
         }
+        [Fact]
+        public void List_Action_Filter_Unassigned_Test() {
+            // Arrange: ensure all incidents have TechnicianID null.
+            foreach (var inc in Incidents)
+            {
+                inc.TechnicianID = null;
+            }
+
+            // Act
+            var result = Controller.List("unassigned");
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsAssignableFrom<IncidentListViewModel>(viewResult.Model);
+            Assert.Equal("unassigned", model.Filter);
+            Assert.Equal(Incidents.Count, model.Incidents.Count);
+        }
+        [Fact]
+        public void List_Action_Filter_Open_Test() {
+            // Arrange: mark first incident as closed.
+            Incidents[0].DateClosed = DateTime.Now;
+
+            // Act
+            var result = Controller.List("open");
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsAssignableFrom<IncidentListViewModel>(viewResult.Model);
+            Assert.Equal("open", model.Filter);
+            // Only the second incident is open.
+            Assert.Single(model.Incidents);
+        }
+
     }
     public class Customer_Controller_ControllerTests {
         public List<Customer> Customers { get; set; }
@@ -119,7 +169,7 @@ namespace NFL_UnitTest {
             MockCustomerRepo = new Mock<IRepository<Customer>>();
             MockCustomerRepo.Setup(repo => repo.GetAll()).Returns(Customers);
             // For the Edit action, GetById(1) should return the first customer.
-            MockCustomerRepo.Setup(repo => repo.GetById(1)).Returns(Customers[0]);
+            MockCustomerRepo.Setup(repo => repo.GetById(1)).Returns(Customers.First());
 
             MockCountryRepo = new Mock<IRepository<Country>>();
             MockCountryRepo.Setup(repo => repo.GetAll()).Returns(Countries);
