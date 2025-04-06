@@ -875,5 +875,42 @@ namespace NFL_UnitTest {
             MockTechnicianRepo.Verify(repo => repo.Delete(techToDelete.TechnicianID), Times.Once);
         }
     }
+    public class Home_Controller_Tests {
 
+        [Fact]
+        public void Index_Action_Test() {
+            // Arrange
+            var controller = new HomeController();
+            var mockSession = new Mock<ISession>();
+
+            mockSession.Setup(s => s.Remove("TechIncidentID"));
+
+            // Create a DefaultHttpContext and set its Session to our mock session.
+            var httpContext = new DefaultHttpContext();
+            httpContext.Session = mockSession.Object;
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContext
+            };
+
+            // Act
+            var result = controller.Index();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            mockSession.Verify(s => s.Remove("TechIncidentID"), Times.Once());
+        }
+
+        [Fact]
+        public void About_Action_Test() {
+            // Arrange
+            var controller = new HomeController();
+
+            // Act
+            var result = controller.About();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+        }
+    }
 }
