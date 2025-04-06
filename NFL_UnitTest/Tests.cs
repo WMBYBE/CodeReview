@@ -819,7 +819,7 @@ namespace NFL_UnitTest {
         }
 
         [Fact]
-        public void Edit_Post_Action_Invalid_Test() {
+        public void Edit_Post_Action_InvalidModelState_Test() {
             // Arrange: Create an invalid TechEditViewModel for editing.
             var model = new TechEditViewModel
             {
@@ -827,7 +827,7 @@ namespace NFL_UnitTest {
                 Technician = new Technician
                 {
                     TechnicianID = 0,
-                    Email = "bad-email",
+                    Email = "bad-email", // invalid
                     Phone = "123-456-7890",
                     Name = "Tech One"
                 }
@@ -844,6 +844,32 @@ namespace NFL_UnitTest {
             Assert.Equal("Edit", viewResult.ViewName);
             var returnedModel = Assert.IsAssignableFrom<TechEditViewModel>(viewResult.Model);
             Assert.Equal("Edit", returnedModel.Mode);
+        }
+
+        [Fact]
+        public void Delete_Get_Action_Test() {
+            // Act
+            var result = Controller.Delete(1);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal("Delete", viewResult.ViewName);
+            var model = Assert.IsAssignableFrom<Technician>(viewResult.Model);
+            Assert.Equal(1, model.TechnicianID);
+        }
+
+        [Fact]
+        public void Delete_Post_Action_Test() {
+            // Arrange: Choose a technician to delete.
+            var techToDelete = Technicians.First(t => t.TechnicianID == 1);
+
+            // Act
+            var result = Controller.Delete(1, techToDelete);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("List", redirectResult.ActionName);
+            MockTechnicianRepo.Verify(repo => repo.Delete(techToDelete.TechnicianID), Times.Once);
         }
     }
 
