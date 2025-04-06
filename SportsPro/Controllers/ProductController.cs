@@ -7,16 +7,15 @@ namespace SportsPro.Controllers
 {
     public class ProductController : Controller
     {
-        private IRepository<Product> data { get; set; }
+        private SportsProContext context { get; set; }
 
-
-        public ProductController(IRepository<Product> rep)
+        public ProductController(SportsProContext ctx)
         {
-            data = rep;
+            context = ctx;
         }
         public ViewResult List()
         {
-            var products = data.GetAll().OrderBy(p => p.ReleaseDate).ToList();
+            var products = context.Products.OrderBy(c => c.ReleaseDate).ToList();
             return View(products);
         }
 
@@ -34,7 +33,7 @@ namespace SportsPro.Controllers
 
         public ViewResult Edit(int id)
         {
-            Product product = data.GetById(id);
+            Product product = context.Products.FirstOrDefault(p => p.ProductID == id);
             ViewBag.Action = "Edit";
 
             return View("AddEdit", product);
@@ -48,17 +47,18 @@ namespace SportsPro.Controllers
                 if (product.ProductID == 0)
                 {
                     TempData["add"] = product.Name + " has been added";
-                    data.Add(product);
+                    context.Products.Add(product);
                 }
                 else
                 {
                     TempData["updated"] = product.Name + " has been updated";
-                    data.Update(product);
+                    context.Products.Update(product);
                 }
 
-                return RedirectToAction("List");
-
-            } 
+                var products = context.Products.OrderBy(c => c.ReleaseDate).ToList();
+                context.SaveChanges();
+                return RedirectToAction("List", products);
+            }
             else
             {
                 return RedirectToAction("AddEdit", product);
@@ -68,7 +68,7 @@ namespace SportsPro.Controllers
 
         public ViewResult Delete(int id)
         {
-            Product product = data.GetById(id);
+            Product product = context.Products.FirstOrDefault(p => p.ProductID == id);
             return View(product);
         }
         [HttpPost]
@@ -76,7 +76,8 @@ namespace SportsPro.Controllers
         public RedirectToActionResult Delete(Product product)
         {
             TempData["delete"] = product.Name + " has been deleted";
-            data.Delete(product.ProductID);
+            context.Products.Remove(product);
+            context.SaveChanges();
             return RedirectToAction("List");
         }
     }
