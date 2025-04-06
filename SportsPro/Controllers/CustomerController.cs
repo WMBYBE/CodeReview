@@ -7,28 +7,25 @@ namespace SportsPro.Controllers
 {
     public class CustomerController : Controller
     {
-        private IRepository<Customer> CustomerData { get; set; }
-        private IRepository<Country> CountryData { get; set; }
+        private SportsProContext Context {  get; set; }
 
-
-        public CustomerController(IRepository<Customer> Custrep, IRepository<Country> Counrep) 
+        public CustomerController(SportsProContext ctx) 
         {
-            CustomerData = Custrep;
-            CountryData = Counrep;
+            Context = ctx;
         }
      
         [HttpGet]
         [Route("/customers")]
         public IActionResult List()
         {
-            var customers = CustomerData.GetAll().ToList();
+            var customers = Context.Customers.ToList();
             return View(customers);
         }
         [HttpGet]
         public IActionResult Add() 
         {
             ViewBag.Action = "Add";
-            ViewBag.Countries = CountryData.GetAll().OrderBy(c => c.Name).ToList();
+            ViewBag.Countries = Context.Countries.OrderBy(c => c.Name).ToList();
             var customer = new Customer();
             return View("Edit", customer); 
         }
@@ -36,8 +33,8 @@ namespace SportsPro.Controllers
         public IActionResult Edit(int id)
         {
             ViewBag.Action = "Edit";
-            var customer = CustomerData.GetById(id);
-            ViewBag.Countries = CountryData.GetAll().OrderBy(c => c.Name).ToList();
+            var customer = Context.Customers.Find(id);
+            ViewBag.Countries = Context.Countries.OrderBy(c => c.Name).ToList();
             return View(customer);
         }
         [HttpPost]
@@ -47,18 +44,19 @@ namespace SportsPro.Controllers
             {
                 if (customer.CustomerID == 0)
                 {
-                    CustomerData.Add(customer);
+                    Context.Customers.Add(customer);
                 }
                 else
                 {
-                    CustomerData.Update(customer);
+                    Context.Customers.Update(customer);
                 }
+                Context.SaveChanges();
                 return RedirectToAction("List");
             }
             else
             {
                 ViewBag.Action = (customer.CustomerID == 0) ? "Add" : "Edit";
-                ViewBag.Countries = CountryData.GetAll().OrderBy(c => c.Name).ToList();
+                ViewBag.Countries = Context.Countries.OrderBy(c => c.Name).ToList();
                 return View(customer);
             }
 
@@ -67,15 +65,16 @@ namespace SportsPro.Controllers
         public IActionResult Delete(int id)
         {
             ViewBag.Action = "Delete";
-            var customer = CustomerData.GetById(id);
+            var customer = Context.Customers.Find(id);
             return View(customer);
         }
 
         [HttpPost]
         public IActionResult Delete(Customer customer)
         {
-            CustomerData.Delete(customer.CustomerID);
-            var customers = CustomerData.GetAll().ToList();
+            Context.Customers.Remove(customer);
+            Context.SaveChanges();
+            var customers = Context.Customers.ToList();
             return View("list", customers);
         }
     }

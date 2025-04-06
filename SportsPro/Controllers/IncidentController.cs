@@ -10,52 +10,41 @@ namespace SportsPro.Controllers
 {
     public class IncidentController : Controller
     {
-        private readonly IRepository<Incident> incidentData;
-        private readonly IRepository<Customer> customerData;
-        private readonly IRepository<Product> productData;
-        private readonly IRepository<Technician> technicianData;
-        private ISession session { get; set; }
-        private IRequestCookieCollection requestCookies { get; set; } 
-        private IResponseCookies responseCookies { get; set; }
-
+        private SportsProContext context { get; set; }
         private List<Customer> customers;
         private List<Product> products;
         private List<Technician> technicians;
 
-        public IncidentController(
-            IRepository<Incident> incidentRep,
-            IRepository<Customer> customerRep,
-            IRepository<Product> productRep,
-            IRepository<Technician> technicianRep,
-            IHttpContextAccessor ctx
-            ) {
 
-            incidentData = incidentRep;
-            customerData = customerRep;
-            productData = productRep;
-            technicianData = technicianRep;
-            session = ctx.HttpContext!.Session;
-            requestCookies = ctx.HttpContext!.Request.Cookies; 
-            responseCookies = ctx.HttpContext!.Response.Cookies;
+        public IncidentController(SportsProContext ctx)
+        {
 
-            customers = customerData.GetAll().OrderBy(c => c.CustomerID).ToList();
-            products = productData.GetAll().OrderBy(p => p.ProductID).ToList();
-            technicians = technicianData.GetAll().OrderBy(t => t.TechnicianID).ToList();
+            context = ctx;
+            customers = context.Customers
+                    .OrderBy(c => c.CustomerID)
+                    .ToList();
+            products = context.Products
+                    .OrderBy(c => c.ProductID)
+                    .ToList();
+            technicians = context.Technicians
+                    .OrderBy(c => c.TechnicianID)
+                    .ToList();
         }
         [HttpGet]
         [Route("/incidents/{filter?}")]
         public IActionResult List(string filter = "all")
         {
-            int? technicianId = session.GetInt32("TechnicianID");
+            int? technicianId = HttpContext.Session.GetInt32("TechnicianID");
 
             if (technicianId.HasValue)
             {
-                session.Remove("TechIncidentID");
+                HttpContext.Session.Remove("TechIncidentID");
             }
             var model = new IncidentListViewModel();
 
-            IQueryable<Incident> query = incidentData.GetAll().AsQueryable();
-
+            IQueryable<Incident> query = context.Incidents
+                .Include(i => i.Customer)
+                .Include(i => i.Product);
 
             switch (filter.ToLower())
             {
@@ -114,7 +103,7 @@ namespace SportsPro.Controllers
                 Technicians = technicians,
                 Products = products,
                 Customers = customers,
-                Incident = incidentData.GetById(id)
+                Incident = context.Incidents.FirstOrDefault(p => p.IncidentID == id)
             };
             return View("AddEdit", model);
         }
@@ -126,26 +115,32 @@ namespace SportsPro.Controllers
             {
                 if (incidents.Incident.ProductID == 0)
                 {
-                    incidentData.Add(incidents.Incident);
+                    context.Incidents.Add(incidents.Incident);
                 }
                 else
                 {
-                    incidentData.Update(incidents.Incident);
+                    context.Incidents.Update(incidents.Incident);
                 }
+                context.SaveChanges();
 
-                int? technicianId = session.GetInt32("TechnicianID");
+                int? technicianId = HttpContext.Session.GetInt32("TechnicianID");
                 
                 if (technicianId.HasValue)
                 {
                     var model = new TechIncidentViewModel()
                     {
-                      Technicians = technicianData.GetAll().ToList(),
-                        Incidents = incidentData.GetAll()
-                            .Where(c => c.TechnicianID == technicianId && c.DateClosed == null)
-                            .ToList(),
-                        SelectedTech = technicianData.GetAll()
-                            .FirstOrDefault(t => t.TechnicianID == technicianId)
+                        Technicians = context.Technicians.ToList(),
+                        Incidents = context.Incidents.ToList(),
+                        SelectedTech = new Technician()
+
                     };
+
+                    model.SelectedTech = context.Technicians.Where(p => p.TechnicianID == technicianId).FirstOrDefault();
+
+                    model.Incidents = context.Incidents
+                        .Where(c => c.TechnicianID == technicianId)
+                        .Where(c => c.DateClosed == null)
+                        .ToList();
                     return View("TechIncidentList", model);
                 } else
                 {
@@ -167,14 +162,16 @@ namespace SportsPro.Controllers
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            Incident incident = incidentData.GetById(id);
-            return View(incident);
+            Incident incidents = context.Incidents
+                .FirstOrDefault(p => p.IncidentID == id);
+            return View(incidents);
         }
 
         [HttpPost]
-        public IActionResult Delete(Incident incident)
+        public IActionResult Delete(Incident incidents)
         {
-            incidentData.Delete(incident.IncidentID);
+            context.Incidents.Remove(incidents);
+            context.SaveChanges();
             return RedirectToAction("List");
         }
 
@@ -185,8 +182,8 @@ namespace SportsPro.Controllers
             
             var model = new TechIncidentViewModel()
             {
-                Technicians = technicianData.GetAll().ToList(),
-                Incidents = incidentData.GetAll().ToList(),
+                Technicians = context.Technicians.ToList(),
+                Incidents = context.Incidents.ToList(),
                 SelectedTech = new Technician()
 
             };
@@ -197,31 +194,36 @@ namespace SportsPro.Controllers
         public ActionResult ListByTech(int Id) {
             var model = new TechIncidentViewModel()
             {
-                Technicians = technicianData.GetAll().ToList(),
-                Incidents = incidentData.GetAll()
-                              .Where(c => c.TechnicianID == Id && c.DateClosed == null)
-                              .ToList(),
+                Technicians = context.Technicians.ToList(),
+                Incidents = context.Incidents.ToList(),
                 SelectedTech = new Technician()
 
             };
+
+            model.SelectedTech = context.Technicians.Where(p => p.TechnicianID == Id).FirstOrDefault();
+
+            model.Incidents = context.Incidents
+                .Where(c => c.TechnicianID == Id)
+                .Where(c => c.DateClosed == null)
+                .ToList();
+
             return View("TechIncidentList", model);
 
         }
         [HttpPost]
         public ActionResult ListByTech(TechIncidentViewModel model) {
-            int? technicianId = session.GetInt32("TechnicianID");
+            int? technicianId = HttpContext.Session.GetInt32("TechnicianID");
 
             if (technicianId.HasValue)
             {
-                session.Remove("TechIncidentID");
+                HttpContext.Session.Remove("TechIncidentID");
             }
 
+            model.SelectedTech = context.Technicians.Where(p => p.TechnicianID == model.SelectedTech.TechnicianID).FirstOrDefault();
 
-            model.SelectedTech = technicianData.GetAll()
-                .FirstOrDefault(p => p.TechnicianID == model.SelectedTech.TechnicianID);
-
-            model.Incidents = incidentData.GetAll()
-                .Where(c => c.TechnicianID == model.SelectedTech.TechnicianID && c.DateClosed == null)
+            model.Incidents = context.Incidents
+                .Where(c => c.TechnicianID == model.SelectedTech.TechnicianID)
+                .Where(c => c.DateClosed == null)
                 .ToList();
 
             return View("TechIncidentList", model);
