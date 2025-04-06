@@ -736,7 +736,8 @@ namespace NFL_UnitTest {
                 Technician = newTech
             };
 
-            Controller.ModelState.Clear(); 
+            Controller.ModelState.Clear();
+            Controller.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
 
             // Act
             var result = Controller.Add(model);
@@ -806,6 +807,7 @@ namespace NFL_UnitTest {
             };
 
             Controller.ModelState.Clear();
+            Controller.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
 
             // Act
             var result = Controller.Edit(1, model);
@@ -862,6 +864,7 @@ namespace NFL_UnitTest {
         public void Delete_Post_Action_Test() {
             // Arrange: Choose a technician to delete.
             var techToDelete = Technicians.First(t => t.TechnicianID == 1);
+            Controller.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
 
             // Act
             var result = Controller.Delete(1, techToDelete);
