@@ -714,7 +714,6 @@ namespace NFL_UnitTest {
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            // Expect the view name to be "Edit".
             Assert.Equal("Edit", viewResult.ViewName);
             var model = Assert.IsAssignableFrom<TechEditViewModel>(viewResult.Model);
             Assert.Equal("Add", model.Mode);
@@ -745,7 +744,6 @@ namespace NFL_UnitTest {
             // Assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("List", redirectResult.ActionName);
-            // Verify repository Add is called.
             MockTechnicianRepo.Verify(repo => repo.Add(newTech), Times.Once);
         }
         [Fact]
@@ -777,6 +775,76 @@ namespace NFL_UnitTest {
             Assert.False(Controller.ModelState.IsValid);
         }
 
+        [Fact]
+        public void Edit_Get_Action_Test() {
+            // Act
+            var result = Controller.Edit(1);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal("Edit", viewResult.ViewName);
+            var model = Assert.IsAssignableFrom<TechEditViewModel>(viewResult.Model);
+            Assert.Equal("Edit", model.Mode);
+            Assert.NotNull(model.Technician);
+        }
+
+        [Fact]
+        public void Edit_Post_Action_Valid_Test() {
+            // Arrange: Use an existing technician.
+            var existingTech = Technicians.First(t => t.TechnicianID == 1);
+
+            var model = new TechEditViewModel
+            {
+                Mode = "Edit",
+                Technician = new Technician
+                {
+                    TechnicianID = 0, // will be overwritten
+                    Email = "updated@example.com",
+                    Phone = "123-456-7890",
+                    Name = "Should be replaced" // will be replaced by original tech's name
+                }
+            };
+
+            Controller.ModelState.Clear();
+
+            // Act
+            var result = Controller.Edit(1, model);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("List", redirectResult.ActionName);
+            MockTechnicianRepo.Verify(repo => repo.Update(
+                It.Is<Technician>(t => t.TechnicianID == existingTech.TechnicianID && t.Name == existingTech.Name)
+            ), Times.Once);
+        }
+
+        [Fact]
+        public void Edit_Post_Action_Invalid_Test() {
+            // Arrange: Create an invalid TechEditViewModel for editing.
+            var model = new TechEditViewModel
+            {
+                Mode = "Edit",
+                Technician = new Technician
+                {
+                    TechnicianID = 0,
+                    Email = "bad-email",
+                    Phone = "123-456-7890",
+                    Name = "Tech One"
+                }
+            };
+
+            // Add an error to simulate invalid state.
+            Controller.ModelState.AddModelError("error", "Invalid");
+
+            // Act
+            var result = Controller.Edit(1, model);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal("Edit", viewResult.ViewName);
+            var returnedModel = Assert.IsAssignableFrom<TechEditViewModel>(viewResult.Model);
+            Assert.Equal("Edit", returnedModel.Mode);
+        }
     }
 
 }
