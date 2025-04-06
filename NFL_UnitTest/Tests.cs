@@ -695,6 +695,7 @@ namespace NFL_UnitTest {
             // Initialize the controller.
             Controller = new TechnicianController(MockTechnicianRepo.Object);
         }
+
         [Fact]
         public void List_Action_Test() {
             // Act
@@ -705,5 +706,77 @@ namespace NFL_UnitTest {
             var model = Assert.IsAssignableFrom<List<Technician>>(viewResult.Model);
             Assert.Equal(Technicians.Count, model.Count);
         }
+
+        [Fact]
+        public void Add_Get_Action_Test() {
+            // Act
+            var result = Controller.Add();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            // Expect the view name to be "Edit".
+            Assert.Equal("Edit", viewResult.ViewName);
+            var model = Assert.IsAssignableFrom<TechEditViewModel>(viewResult.Model);
+            Assert.Equal("Add", model.Mode);
+            Assert.NotNull(model.Technician);
+        }
+
+        [Fact]
+        public void Add_Post_Action_Valid_Test() {
+
+            var newTech = new Technician
+            {
+                TechnicianID = 0,
+                Name = "New Tech",
+                Email = "newtech@example.com",
+                Phone = "345-678-9012"
+            };
+            var model = new TechEditViewModel
+            {
+                Mode = "Add",
+                Technician = newTech
+            };
+
+            Controller.ModelState.Clear(); 
+
+            // Act
+            var result = Controller.Add(model);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("List", redirectResult.ActionName);
+            // Verify repository Add is called.
+            MockTechnicianRepo.Verify(repo => repo.Add(newTech), Times.Once);
+        }
+        [Fact]
+        public void Add_Post_Action_Invalid_Test() {
+
+            var newTech = new Technician
+            {
+                TechnicianID = 0,
+                Name = "New Tech",
+                Email = "bad-email", // invalid
+                Phone = "345-678-9012"
+            };
+            var model = new TechEditViewModel
+            {
+                Mode = "Add",
+                Technician = newTech
+            };
+
+            Controller.ModelState.Clear(); 
+
+            // Act
+            var result = Controller.Add(model);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal("Edit", viewResult.ViewName);
+            var returnedModel = Assert.IsAssignableFrom<TechEditViewModel>(viewResult.Model);
+            Assert.Equal("Add", returnedModel.Mode);
+            Assert.False(Controller.ModelState.IsValid);
+        }
+
     }
+
 }
