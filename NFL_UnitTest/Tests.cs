@@ -102,6 +102,7 @@ namespace NFL_UnitTest {
                 MockHttpContextAccessor.Object
             );
         }
+
         [Fact]
         public void List_Action_All_Filter_Test() {
             // Act
