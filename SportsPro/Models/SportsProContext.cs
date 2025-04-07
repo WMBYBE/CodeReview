@@ -14,9 +14,20 @@ namespace SportsPro.Models
         public DbSet<Country> Countries { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Incident> Incidents { get; set; }
+        public DbSet<CustomerProduct> CustomerProducts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<CustomerProduct>()
+                .HasKey(cp => new { cp.CustomerID, cp.ProductID });
+            modelBuilder.Entity<CustomerProduct>()
+                .HasOne(cp => cp.Customer)
+                .WithMany(c => c.CustomerProducts)
+                .HasForeignKey(CustomerProduct => CustomerProduct.CustomerID);
+            modelBuilder.Entity<CustomerProduct>()
+                .HasOne(cp => cp.Product)
+                .WithMany(p => p.CustomerProducts)
+                .HasForeignKey(cp => cp.ProductID);
             modelBuilder.Entity<Product>().HasData(
                 new Product
                 {
