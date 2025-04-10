@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Microsoft.EntityFrameworkCore;
-using SportsPro.Models;
+using SportsPro.Models.datalayer;
 
 namespace SportsPro
 {

@@ -2,19 +2,63 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using SportsPro.Models;
+using SportsPro.Models.datalayer;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace SportsPro.Controllers
 {
     public class IncidentController : Controller
     {
         private SportsProContext context { get; set; }
+
+        private Repository<Technician> technician { get; set; }
+        private Repository<Product> product { get; set; }
+        private Repository<Customer> customer { get; set; }
+        private Repository<Incident> incident { get; set; }
+        
         private List<Customer> customers;
         private List<Product> products;
         private List<Technician> technicians;
+        
+        
 
 
+        public IncidentController(SportsProContext ctx)
+        {
+            technician = new Repository<Technician>(ctx);
+            product = new Repository<Product>(ctx);
+            customer = new Repository<Customer>(ctx);
+            incident = new Repository<Incident>(ctx);
+            
+
+
+
+            var custOptions = new QueryOptions<Customer>
+            {
+                OrderBy = d => d.CustomerID
+            };
+            var prodOptions = new QueryOptions<Product>
+            {
+                OrderBy = d => d.ProductID
+            };
+            var techOptions = new QueryOptions<Technician>
+            {
+                OrderBy = d => d.TechnicianID
+            };
+
+            var customers2 = customer.List(custOptions);
+            var products2 = product.List(prodOptions);
+            var technicians2 = technician.List(techOptions);
+
+            technicians = technicians2.ToList();
+            customers = customers2.ToList();
+            products = products2.ToList();
+
+        }
+
+        /*
         public IncidentController(SportsProContext ctx)
         {
             context = ctx;
@@ -28,12 +72,31 @@ namespace SportsPro.Controllers
                     .OrderBy(c => c.TechnicianID)
                     .ToList();
         }
+        */
+
         [HttpGet]
         [Route("/incidents")]
         public IActionResult List()
         {
+            var incinOptions = new QueryOptions<Incident>
+            {
+                Includes = "Product, Customer",
+                
+            };
+
             var model = new IncidentListViewModel();
-            model.Incidents = context.Incidents
+
+            var stuff = incident.List(incinOptions);
+
+        model.Incidents = stuff.Select(i => new IncidentViewModel
+        {
+            IncidentID = i.IncidentID,
+            Title = i.Title,
+            CustomerName = i.Customer.FullName,
+            ProductName = i.Product.Name,
+            DateOpened = i.DateOpened
+        }).ToList(); ;
+            /*model.Incidents = context.Incidents
                 .Include(i => i.Customer)
                 .Include(i => i.Product)
                 .Select(i => new IncidentViewModel
@@ -43,7 +106,7 @@ namespace SportsPro.Controllers
                     CustomerName = i.Customer.FullName,
                     ProductName = i.Product.Name,
                     DateOpened = i.DateOpened
-                }).ToList();
+                }).ToList();*/
             return View(model);
         }
 
@@ -74,7 +137,8 @@ namespace SportsPro.Controllers
                 Technicians = technicians,
                 Products = products,
                 Customers = customers,
-                Incident = context.Incidents.FirstOrDefault(p => p.IncidentID == id)
+                Incident = incident.Get(id)
+
             };
             return View("AddEdit", model);
         }
@@ -85,13 +149,13 @@ namespace SportsPro.Controllers
             {
                 if (incidents.Incident.ProductID == 0)
                 {
-                    context.Incidents.Add(incidents.Incident);
+                    incident.Insert(incidents.Incident);
                 }
                 else
                 {
-                    context.Incidents.Update(incidents.Incident);
+                    incident.Update(incidents.Incident);
                 }
-                context.SaveChanges();
+                incident.Save();
                 return RedirectToAction("List");
             }
             else
@@ -108,16 +172,15 @@ namespace SportsPro.Controllers
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            Incident incidents = context.Incidents
-                .FirstOrDefault(p => p.IncidentID == id);
+            Incident incidents = incident.Get(id);
             return View(incidents);
         }
 
         [HttpPost]
         public IActionResult Delete(Incident incidents)
         {
-            context.Incidents.Remove(incidents);
-            context.SaveChanges();
+            incident.Delete(incidents);
+            incident.Save();
             return RedirectToAction("List");
         }
     }
