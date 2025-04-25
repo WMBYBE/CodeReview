@@ -5,8 +5,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Microsoft.EntityFrameworkCore;
+<<<<<<< HEAD
 using SportsPro.Models;
 using System;
+=======
+using SportsPro.Models.datalayer;
+>>>>>>> Blade-Branch
 
 namespace SportsPro
 {
