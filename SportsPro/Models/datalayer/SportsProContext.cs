@@ -14,22 +14,9 @@ namespace SportsPro.Models.datalayer
         public DbSet<Country> Countries { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Incident> Incidents { get; set; }
-        public DbSet<CustomerProduct> CustomerProducts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-<<<<<<< HEAD:SportsPro/Models/SportsProContext.cs
-            modelBuilder.Entity<CustomerProduct>()
-                .HasKey(cp => new { cp.CustomerID, cp.ProductID });
-            modelBuilder.Entity<CustomerProduct>()
-                .HasOne(cp => cp.Customer)
-                .WithMany(c => c.CustomerProducts)
-                .HasForeignKey(CustomerProduct => CustomerProduct.CustomerID);
-            modelBuilder.Entity<CustomerProduct>()
-                .HasOne(cp => cp.Product)
-                .WithMany(p => p.CustomerProducts)
-                .HasForeignKey(cp => cp.ProductID);
-=======
 
             modelBuilder.ApplyConfiguration(new CountryConfig());
             modelBuilder.ApplyConfiguration(new CustomerConfig());
@@ -37,7 +24,6 @@ namespace SportsPro.Models.datalayer
             modelBuilder.ApplyConfiguration(new ProductConfig());
             modelBuilder.ApplyConfiguration(new TechnicianConfig());
             /*
->>>>>>> Blade-Branch:SportsPro/Models/datalayer/SportsProContext.cs
             modelBuilder.Entity<Product>().HasData(
                 new Product
                 {
