@@ -380,24 +380,6 @@ namespace SportsPro.Migrations
                         });
                 });
 
-            modelBuilder.Entity("SportsPro.Models.CustomerProduct", b =>
-                {
-                    b.Property<int>("CustomerID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("RegistrationDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("CustomerID", "ProductID");
-
-                    b.HasIndex("ProductID");
-
-                    b.ToTable("CustomerProducts");
-                });
-
             modelBuilder.Entity("SportsPro.Models.Incident", b =>
                 {
                     b.Property<int>("IncidentID")
@@ -641,25 +623,6 @@ namespace SportsPro.Migrations
                     b.Navigation("Country");
                 });
 
-            modelBuilder.Entity("SportsPro.Models.CustomerProduct", b =>
-                {
-                    b.HasOne("SportsPro.Models.Customer", "Customer")
-                        .WithMany("CustomerProducts")
-                        .HasForeignKey("CustomerID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SportsPro.Models.Product", "Product")
-                        .WithMany("CustomerProducts")
-                        .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("SportsPro.Models.Incident", b =>
                 {
                     b.HasOne("SportsPro.Models.Customer", "Customer")
@@ -683,16 +646,6 @@ namespace SportsPro.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Technician");
-                });
-
-            modelBuilder.Entity("SportsPro.Models.Customer", b =>
-                {
-                    b.Navigation("CustomerProducts");
-                });
-
-            modelBuilder.Entity("SportsPro.Models.Product", b =>
-                {
-                    b.Navigation("CustomerProducts");
                 });
 #pragma warning restore 612, 618
         }

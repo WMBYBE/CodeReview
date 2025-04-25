@@ -17,12 +17,6 @@
         @TempData["updated"]
     </h3>
 }
-@using Microsoft.AspNetCore.Http
-@{
-    int? technicianId = Context.Session.GetInt32("TechnicianID");
-    if (technicianId.HasValue) { Context.Session.Remove("TechnicianID"); }
-}
-
 <table class="table table-bordered table-striped">
     <tbody>
         @foreach (var product in Model)
