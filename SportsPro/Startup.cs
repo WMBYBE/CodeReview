@@ -5,12 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Microsoft.EntityFrameworkCore;
-<<<<<<< HEAD
-using SportsPro.Models;
-using System;
-=======
 using SportsPro.Models.datalayer;
->>>>>>> Blade-Branch
 
 namespace SportsPro
 {
@@ -26,12 +21,7 @@ namespace SportsPro
         // Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
-            services.AddHttpContextAccessor();
-
             services.AddControllersWithViews();
-            services.AddMemoryCache();
-            services.AddSession();
 
             services.AddDbContext<SportsProContext>(options =>
                 options.UseSqlServer(
@@ -40,16 +30,6 @@ namespace SportsPro
             services.AddRouting(options => {
                 options.LowercaseUrls = true;
                 options.AppendTrailingSlash = true;
-            });
-
-            services.AddDistributedMemoryCache();
-
-
-            services.AddSession(options =>
-            {
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
-                options.Cookie.HttpOnly = false;
-                options.Cookie.IsEssential = true;
             });
         }
 
@@ -69,14 +49,9 @@ namespace SportsPro
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            
-           
-
             app.UseRouting();
 
             app.UseAuthorization();
-
-            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
@@ -84,8 +59,6 @@ namespace SportsPro
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}/");
             });
-  
-
         }
     }
 }
