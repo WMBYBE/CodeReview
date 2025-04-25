@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+﻿
+@model Customer
+=======
 ﻿@model Customer
 @using Microsoft.AspNetCore.Http
 
@@ -9,8 +13,9 @@
 }
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+>>>>>>> Blade-Branch
 
-<h2>@title</h2>
+<h2>test</h2>
 
 <form asp-action="edit" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>
@@ -56,7 +61,7 @@
         <select asp-for="CountryID"
                 asp-items="@(new SelectList(ViewBag.Countries,
                     "CountryID", "Name",
-                    Model.CountryID.ToString()))"
+                Model.CountryID.ToString()))"
                 class="form-control">
             
         </select>

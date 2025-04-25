@@ -2,6 +2,11 @@
 @{
     ViewBag.Title = "Customer Manager";
 }
+@using Microsoft.AspNetCore.Http
+@{
+    int? technicianId = Context.Session.GetInt32("TechnicianID");
+    if (technicianId.HasValue) { Context.Session.Remove("TechnicianID"); }
+}
 
 <h2>@ViewBag.Title</h2>
 

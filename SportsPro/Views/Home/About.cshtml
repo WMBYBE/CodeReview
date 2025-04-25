@@ -1,6 +1,11 @@
 ﻿@{
     ViewData["Title"] = "Admin";
 }
+@using Microsoft.AspNetCore.Http
+@{
+    int? technicianId = Context.Session.GetInt32("TechnicianID");
+    if (technicianId.HasValue) { Context.Session.Remove("TechnicianID"); }
+}
 
     <div class="jumbotron bg-secondary mt-4">
         <h1 class="text-light">About</h1>
