@@ -23,6 +23,7 @@ namespace SportsPro.Models.datalayer
             modelBuilder.ApplyConfiguration(new IncidentConfig());
             modelBuilder.ApplyConfiguration(new ProductConfig());
             modelBuilder.ApplyConfiguration(new TechnicianConfig());
+            modelBuilder.ApplyConfiguration(new LoginConfig());
             /*
             modelBuilder.Entity<Product>().HasData(
                 new Product

@@ -6,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 
 using Microsoft.EntityFrameworkCore;
 using SportsPro.Models.datalayer;
+using Microsoft.AspNetCore.Identity;
+using SportsPro.Models;
 
 namespace SportsPro
 {
@@ -30,7 +32,16 @@ namespace SportsPro
             services.AddRouting(options => {
                 options.LowercaseUrls = true;
                 options.AppendTrailingSlash = true;
+
+
             });
+
+            services.AddIdentity<User, IdentityRole>(options => {
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false;
+            }).AddEntityFrameworkStores<SportsProContext>()
+            .AddDefaultTokenProviders();
         }
 
         // Use this method to configure the HTTP request pipeline.
