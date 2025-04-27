@@ -37,6 +37,7 @@ namespace SportsPro
             });
 
             services.AddDistributedMemoryCache();
+            services.AddHttpContextAccessor();
 
             services.AddSession(options =>
             {
