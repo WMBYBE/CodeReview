@@ -1,7 +1,16 @@
-﻿
-@model Customer
+﻿@model Customer
+@using Microsoft.AspNetCore.Http
 
-<h2>test</h2>
+
+@{
+    string title = ViewBag.Action + " Customer";
+    ViewBag.Title = title;
+    Layout = "_Layout";
+}
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+<h2>@title</h2>
 
 <form asp-action="edit" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>
@@ -9,31 +18,37 @@
     <div class="form-group">
         <label asp-for="FirstName">First Name</label>
         <input asp-for="FirstName" class="form-control" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="LastName">Last Name</label>
         <input asp-for="LastName" class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="Address">Address</label>
         <input asp-for="Address" class="form-control" />
+        <span asp-validation-for="Address" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="City">City</label>
         <input asp-for="City" class="form-control" />
+        <span asp-validation-for="City" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="State">State</label>
         <input asp-for="State" class="form-control" />
+        <span asp-validation-for="State" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="PostalCode">Postal Code</label>
         <input asp-for="PostalCode" class="form-control" />
+        <span asp-validation-for="PostalCode" class="text-danger"></span>
     </div>
 
     <div class="form-group">
@@ -41,9 +56,9 @@
         <select asp-for="CountryID"
                 asp-items="@(new SelectList(ViewBag.Countries,
                     "CountryID", "Name",
-                Model.CountryID.ToString()))"
+                    Model.CountryID.ToString()))"
                 class="form-control">
-            <option value="">Select a Country...</option>
+            
         </select>
         <span asp-validation-for="CountryID" class="text-danger"></span>
     </div>
@@ -51,11 +66,13 @@
     <div class="form-group">
         <label asp-for="Phone">Phone</label>
         <input asp-for="Phone" class="form-control" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="Email">Email</label>
         <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
 
     <div class="form-group">
