@@ -31,6 +31,19 @@ namespace SportsPro
                 options.LowercaseUrls = true;
                 options.AppendTrailingSlash = true;
             });
+<<<<<<< Updated upstream
+=======
+
+            services.AddDistributedMemoryCache();
+            services.AddHttpContextAccessor();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = false;
+                options.Cookie.IsEssential = true;
+            });
+>>>>>>> Stashed changes
         }
 
         // Use this method to configure the HTTP request pipeline.

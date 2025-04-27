@@ -1,4 +1,30 @@
 ﻿@model IncidentListViewModel
+<<<<<<< Updated upstream
+=======
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "incident Manager";
+  int? technicianId = Context.Session.GetInt32("TechnicianID");
+    if (technicianId.HasValue) { Context.Session.Remove("TechnicianID"); }
+}
+<h1> Incident Manager </h1>
+
+<ul class="nav nav-pills mb-3">
+    <li class="nav-item">
+        <a class="nav-link" href="/incidents/all/" Active-When="/incidents/all/"> All Incidents</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/incidents/unassigned/" Active-When="/incidents/unassigned/"> Unassigned Incidents</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/incidents/open/" Active-When="/incidents/open/"> Open Incidents</a>
+    </li>
+</ul>
+
+
+
+>>>>>>> Stashed changes
 <table class="table table-bordered table-striped">
     <tbody>
         <tr>
