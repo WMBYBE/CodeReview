@@ -8,10 +8,12 @@ using System.Text.Json.Nodes;
 using SportsPro.Models.datalayer;
 using NuGet.DependencyResolver;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace SportsPro.Controllers
 {
+
     public class CustomerController : Controller
     {
         //private SportsProContext Context {  get; set; }
@@ -39,6 +41,7 @@ namespace SportsPro.Controllers
             var customers = Customer.List(custOptions);
             return View(customers);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult Add() 
         {
@@ -53,6 +56,8 @@ namespace SportsPro.Controllers
             c.CountryID = "United States"; //DO NOT DELETE THIS LITERALLY FIXES EVERYTHING AND I DO NOT KNOW WHY. -Blade
             return View("Edit", c); 
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
         public IActionResult Edit(int id)
         {
@@ -66,6 +71,8 @@ namespace SportsPro.Controllers
             ViewBag.Countries = Country.List(contOptions);
             return View(customer);
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpPost]
         public IActionResult Edit(Customer customer)
         {
@@ -95,6 +102,9 @@ namespace SportsPro.Controllers
             }
 
         }
+
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
         public IActionResult Delete(int id)
         {
@@ -102,6 +112,7 @@ namespace SportsPro.Controllers
             var customer = Customer.Get(id);
             return View(customer);
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPost]
         public IActionResult Delete(Customer customer)

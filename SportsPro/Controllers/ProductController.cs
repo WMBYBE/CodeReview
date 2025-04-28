@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using SportsPro.Models;
 using SportsPro.Models.datalayer;
@@ -7,6 +8,7 @@ using System.Security.Claims;
 
 namespace SportsPro.Controllers
 {
+
     public class ProductController : Controller
     {
 
@@ -31,6 +33,8 @@ namespace SportsPro.Controllers
             return View(list);
         }
 
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
         public ViewResult Add()
         {
@@ -41,6 +45,7 @@ namespace SportsPro.Controllers
             // bind product to AddUpdate view
             return View("AddEdit", product);
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpGet]
         public ViewResult Edit(int id)
@@ -51,6 +56,8 @@ namespace SportsPro.Controllers
 
             return View("AddEdit", product);
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpPost]
 
         public RedirectToActionResult Edit(Product product)
@@ -84,6 +91,8 @@ namespace SportsPro.Controllers
                 return RedirectToAction("AddEdit", product);
             }
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
 
         public ViewResult Delete(int id)
@@ -91,6 +100,8 @@ namespace SportsPro.Controllers
             Product product = produt.Get(id);
             return View(product);
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpPost]
 
         public RedirectToActionResult Delete(Product product)

@@ -2,15 +2,16 @@
 using Microsoft.AspNetCore.Identity;
 using SportsPro.Models;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
 
 namespace SportsPro.Controllers
 {
     public class AccountController : Controller
     {
-        private UserManager<User> userManager;
+        private Microsoft.AspNetCore.Identity.UserManager<User> userManager;
         private SignInManager<User> signInManager;
 
-        public AccountController(UserManager<User> userMngr,
+        public AccountController(Microsoft.AspNetCore.Identity.UserManager<User> userMngr,
             SignInManager<User> signInMngr)
         {
             userManager = userMngr;
@@ -26,6 +27,7 @@ namespace SportsPro.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
+
             if (ModelState.IsValid)
             {
                 var user = new User

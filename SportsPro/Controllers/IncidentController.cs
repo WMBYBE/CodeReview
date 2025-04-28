@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using SportsPro.Models;
@@ -9,6 +10,7 @@ using System.Security.Claims;
 
 namespace SportsPro.Controllers
 {
+
     public class IncidentController : Controller
     {
         private SportsProContext context { get; set; }
@@ -110,6 +112,9 @@ namespace SportsPro.Controllers
             return View(model);
         }
 
+
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
         public IActionResult Add()
         {
@@ -128,6 +133,9 @@ namespace SportsPro.Controllers
             // bind product to AddEdit view
             return View("AddEdit", model);
         }
+
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
         public IActionResult Edit(int id)
         {
@@ -142,6 +150,9 @@ namespace SportsPro.Controllers
             };
             return View("AddEdit", model);
         }
+
+        [Authorize(Roles = "Admin")]
+
         [HttpPost]
         public IActionResult Edit(IncidentEditViewModel incidents)
         {
@@ -169,12 +180,15 @@ namespace SportsPro.Controllers
                 return View("AddEdit", incidents);
             }
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
         public IActionResult Delete(int id)
         {
             Incident incidents = incident.Get(id);
             return View(incidents);
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPost]
         public IActionResult Delete(Incident incidents)

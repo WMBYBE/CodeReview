@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SportsPro.Models;
 using SportsPro.Models.datalayer;
@@ -7,6 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace SportsPro.Controllers
 {
+
     public class TechnicianController : Controller
     {
         private Repository<Technician> tech { get; set; }
@@ -15,6 +17,7 @@ namespace SportsPro.Controllers
         { 
             tech = new Repository<Technician>(ctx);
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpGet]
         [Route("/technicians")]
@@ -90,6 +93,7 @@ namespace SportsPro.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
 
         [HttpGet]
         public ActionResult Add()
@@ -103,6 +107,7 @@ namespace SportsPro.Controllers
 
             return View("Edit", model);
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPost]
         public ActionResult Add(TechEditViewModel model)
@@ -129,6 +134,7 @@ namespace SportsPro.Controllers
             TempData["message"] = $"You just added the team {model.Technician.Name}.";
             return RedirectToAction("List", "Technician");
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpGet]
         public ActionResult Edit(int id)
@@ -157,6 +163,7 @@ namespace SportsPro.Controllers
 
             return View("Edit", model);
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPost]
         public ActionResult Edit(int id, TechEditViewModel model)
@@ -201,6 +208,7 @@ namespace SportsPro.Controllers
             TempData["message"] = $"You just edited the team {model.Technician.Name}.";
             return RedirectToAction("List", "Technician");
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpGet]
         public ActionResult Delete(int id)
@@ -224,6 +232,7 @@ namespace SportsPro.Controllers
 
             return View("Delete", model2);
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPost]
         public ActionResult Delete(int id, Technician model)
