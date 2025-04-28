@@ -98,24 +98,18 @@ namespace SportsPro.Controllers
         [HttpGet]
         public IActionResult Delete(int id)
         {
+            ViewBag.Action = "Delete";
             var customer = Context.Customers.Find(id);
-
-            var model = new DeleteConfirmationViewModel
-            {
-                ID = customer.CustomerID,
-                Name = customer.FullName
-            };
-            return View(model);
+            return View(customer);
         }
 
         [HttpPost]
-        public IActionResult Delete(DeleteConfirmationViewModel model)
+        public IActionResult Delete(Customer customer)
         {
-            var customer = Context.Customers.Find(model.ID);
             Context.Customers.Remove(customer);
             Context.SaveChanges();
- 
-            return View("list");
+            var customers = Context.Customers.ToList();
+            return View("list", customers);
         }
 
         

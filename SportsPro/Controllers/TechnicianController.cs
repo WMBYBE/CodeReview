@@ -202,36 +202,55 @@ namespace SportsPro.Controllers
             return RedirectToAction("List", "Technician");
         }
 
-        public IActionResult Delete(int id)
+        [HttpGet]
+        public ActionResult Delete(int id)
         {
-            var technician = _context.Technicians
+            // Ensure the user is logged in
+            var model = new Technician();
+
+
+            // Verify the character exists and is owned by the logged in user
+            model = _context.Technicians
                 .Where(c => c.TechnicianID == id)
                 .FirstOrDefault();
             */
             var model2 = tech.Get(id);
 
-            var model = new DeleteConfirmationViewModel
+            if (model == null)
             {
-                ID = technician.TechnicianID,
-                Name = technician.Name
-            };
+                return NotFound();
+            }
+
             return View("Delete", model);
         }
 
         [HttpPost]
-        public IActionResult Delete(DeleteConfirmationViewModel model)
+        public ActionResult Delete(int id, Technician model)
         {
-            var technician = _context.Technicians
-                .Where(c => c.TechnicianID == model.ID)
+
+            // Ensure the character exists and is owned by the logged in user
+            var Technician = _context.Technicians
+                .Where(c => c.TechnicianID == id)
                 .FirstOrDefault();
             */
             var Technician2 = tech.Get(id);
 
-            _context.Technicians.Remove(technician);
+            if (Technician == null)
+            {
+                return NotFound();
+            }
+
+
+
+            // Remove the character
+            _context.Remove(Technician);
             _context.SaveChanges();
+
+            // Return to the user's character list page
+            TempData["message"] = $"You just deleted the character {Technician.Name}.";
             return RedirectToAction("List", "Technician");
         }
 
-
+        
     }
 }

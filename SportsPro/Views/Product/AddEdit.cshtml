@@ -6,9 +6,10 @@
     ViewBag.Title = title;
     Layout = "_Layout";
 }
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
 <h2>@title</h2>
-@await Html.PartialAsync("_ValidationScriptspartial")
 
 <form asp-action="Edit" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>

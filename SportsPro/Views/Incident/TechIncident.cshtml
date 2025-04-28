@@ -4,8 +4,8 @@
     int? technicianId = Context.Session.GetInt32("TechnicianID");
     if (technicianId.HasValue) { Context.Session.Remove("TechnicianID"); }
 }
-
-@await Html.PartialAsync("_ValidationScriptspartial")
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
 
 

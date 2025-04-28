@@ -2,7 +2,6 @@
 @using Microsoft.AspNetCore.Http
 
 <h2>test</h2>
-@await Html.PartialAsync("_ValidationScriptspartial")
 
 <form asp-action="edit" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>
@@ -45,8 +44,13 @@
 
     <div class="form-group">
         <label asp-for="CountryID">Country</label>
-        <Country-select asp-for="CountryID"
-                           select-country-id="@Model.CountryID"></Country-select>
+        <select asp-for="CountryID"
+                asp-items="@(new SelectList(ViewBag.Countries,
+                    "CountryID", "Name",
+                Model.CountryID.ToString()))"
+                class="form-control">
+            <option value="">Select a Country...</option>
+        </select>
         <span asp-validation-for="CountryID" class="text-danger"></span>
     </div>
 
