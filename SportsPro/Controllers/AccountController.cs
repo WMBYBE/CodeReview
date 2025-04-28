@@ -89,25 +89,17 @@ namespace SportsPro.Controllers
 
                     const string defaultRole = "User";
                     if (!await roleManager.RoleExistsAsync(defaultRole))
-                    {
                         await roleManager.CreateAsync(new IdentityRole(defaultRole));
-                    }
 
                     var roles = await userManager.GetRolesAsync(user);
-
                     if (!roles.Any() || (!roles.Contains("Admin") && !roles.Contains(defaultRole)))
-                    {
                         await userManager.AddToRoleAsync(user, defaultRole);
-                    }
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) &&
-                        Url.IsLocalUrl(model.ReturnUrl))
-                    {
+
+                    await signInManager.RefreshSignInAsync(user);
+
+                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                         return Redirect(model.ReturnUrl);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
+                    return RedirectToAction("Index", "Home");
                 }
             }
             ModelState.AddModelError("", "Invalid username/password.");
