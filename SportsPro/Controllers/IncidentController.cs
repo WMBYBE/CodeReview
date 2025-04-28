@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
@@ -8,6 +9,7 @@ using System.Linq;
 
 namespace SportsPro.Controllers
 {
+
     public class IncidentController : Controller
     {
         private SportsProContext context { get; set; }
@@ -30,6 +32,9 @@ namespace SportsPro.Controllers
                     .OrderBy(c => c.TechnicianID)
                     .ToList();
         }
+        
+        [Authorize(Roles = "Admin,User")]
+
         [HttpGet]
         [Route("/incidents/{filter?}")]
         public IActionResult List(string filter = "all")
@@ -74,6 +79,9 @@ namespace SportsPro.Controllers
             return View(model);
         }
 
+
+        [Authorize(Roles = "Admin,User")]
+
         [HttpGet]
         public IActionResult Add()
         {
@@ -93,6 +101,9 @@ namespace SportsPro.Controllers
             // bind product to AddEdit view
             return View("AddEdit", model);
         }
+
+        [Authorize(Roles = "Admin,User")]
+
         [HttpGet]
         public IActionResult Edit(int id)
         {
@@ -107,6 +118,9 @@ namespace SportsPro.Controllers
             };
             return View("AddEdit", model);
         }
+
+        [Authorize(Roles = "Admin,User")]
+
         [HttpPost]
         public IActionResult Edit(IncidentEditViewModel incidents)
         {
@@ -159,6 +173,8 @@ namespace SportsPro.Controllers
                 return View("AddEdit", incidents);
             }
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
         public IActionResult Delete(int id)
         {
@@ -171,6 +187,7 @@ namespace SportsPro.Controllers
             };
             return View(model);
         }
+        [Authorize(Roles = "Admin")]
 
             [HttpPost]
         public IActionResult Delete(DeleteConfirmationViewModel model)

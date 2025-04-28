@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SportsPro.Models;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace SportsPro.Controllers
 {
+
     public class TechnicianController : Controller
     {
         private SportsProContext _context;
@@ -13,8 +15,11 @@ namespace SportsPro.Controllers
         {
             _context = context;
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
         [Route("/technicians")]
+
         public IActionResult List()
         {
             var techs = _context.Technicians.ToList();
@@ -72,6 +77,7 @@ namespace SportsPro.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
 
         [HttpGet]
         public ActionResult Add()
@@ -85,6 +91,7 @@ namespace SportsPro.Controllers
 
             return View("Edit", model);
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPost]
         public ActionResult Add(TechEditViewModel model)
@@ -111,6 +118,7 @@ namespace SportsPro.Controllers
             TempData["message"] = $"You just added the team {model.Technician.Name}.";
             return RedirectToAction("List", "Technician");
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpGet]
         public ActionResult Edit(int id)
@@ -135,6 +143,7 @@ namespace SportsPro.Controllers
 
             return View("Edit", model);
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPost]
         public ActionResult Edit(int id, TechEditViewModel model)
@@ -174,6 +183,7 @@ namespace SportsPro.Controllers
             TempData["message"] = $"You just edited the team {model.Technician.Name}.";
             return RedirectToAction("List", "Technician");
         }
+        [Authorize(Roles = "Admin")]
 
         public IActionResult Delete(int id)
         {
@@ -188,6 +198,7 @@ namespace SportsPro.Controllers
             };
             return View("Delete", model);
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPost]
         public IActionResult Delete(DeleteConfirmationViewModel model)
@@ -204,3 +215,4 @@ namespace SportsPro.Controllers
 
     }
 }
+    

@@ -7,7 +7,8 @@ if (technicianId.HasValue){Context.Session.Remove("TechnicianID");}}
 
 <h1>SportsPro Technical Support</h1>
 <p>Sports management software for the sports enthusiast</p>
-
+@if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
+{
 <h1>Admin</h1>
 <div class="list-group">
     <a asp-controller="Product" asp-action="List"
@@ -21,6 +22,8 @@ if (technicianId.HasValue){Context.Session.Remove("TechnicianID");}}
     <a asp-controller="Registration" asp-action="SelectCustomer"
        class="list-group-item">Manage Registrations</a>
 </div>
+}
+
 
 <h1>Technicians</h1>
 <div class="list-group">

@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using SportsPro.Models;
 using System.Linq;
 
 namespace SportsPro.Controllers
 {
+    [Authorize(Roles = "Admin")]
+
     public class ProductController : Controller
     {
         private SportsProContext context { get; set; }
@@ -19,6 +22,8 @@ namespace SportsPro.Controllers
             return View(products);
         }
 
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
         public ViewResult Add()
         {
@@ -29,6 +34,8 @@ namespace SportsPro.Controllers
             // bind product to AddUpdate view
             return View("AddEdit", product);
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
 
         public ViewResult Edit(int id)
@@ -38,6 +45,8 @@ namespace SportsPro.Controllers
 
             return View("AddEdit", product);
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpPost]
 
         public RedirectToActionResult Edit(Product product)
@@ -64,6 +73,8 @@ namespace SportsPro.Controllers
                 return RedirectToAction("AddEdit", product);
             }
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
         public IActionResult Delete(int id)
         {
@@ -76,6 +87,8 @@ namespace SportsPro.Controllers
             };
             return View(model);
         }
+        [Authorize(Roles = "Admin")]
+
 
         [HttpPost]
         public RedirectToActionResult Delete(DeleteConfirmationViewModel model)

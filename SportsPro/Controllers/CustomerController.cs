@@ -2,18 +2,36 @@
 using Microsoft.AspNetCore.Mvc;
 using SportsPro.Models;
 using System.Linq;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Nodes;
+using SportsPro.Models.datalayer;
+using NuGet.DependencyResolver;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace SportsPro.Controllers
 {
+
     public class CustomerController : Controller
     {
         private SportsProContext Context {  get; set; }
 
         public CustomerController(SportsProContext ctx) 
         {
-            Context = ctx;
+            Customer = new Repository<Customer>(ctx);
+            Country = new Repository<Country>(ctx);
         }
-     
+        [Authorize(Roles = "Admin")]
+
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
         [Route("/customers")]
         public IActionResult List()
@@ -21,6 +39,7 @@ namespace SportsPro.Controllers
             var customers = Context.Customers.ToList();
             return View(customers);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult Add() 
         {
@@ -29,6 +48,8 @@ namespace SportsPro.Controllers
             var customer = new Customer();
             return View("Edit", customer); 
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
         public IActionResult Edit(int id)
         {
@@ -37,6 +58,8 @@ namespace SportsPro.Controllers
             ViewBag.Countries = Context.Countries.OrderBy(c => c.Name).ToList();
             return View(customer);
         }
+        [Authorize(Roles = "Admin")]
+
         [HttpPost]
         public IActionResult Edit(Customer customer)
         {
@@ -61,6 +84,9 @@ namespace SportsPro.Controllers
             }
 
         }
+
+        [Authorize(Roles = "Admin")]
+
         [HttpGet]
         public IActionResult Delete(int id)
         {
@@ -73,6 +99,7 @@ namespace SportsPro.Controllers
             };
             return View(model);
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPost]
         public IActionResult Delete(DeleteConfirmationViewModel model)
