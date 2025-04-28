@@ -19,13 +19,14 @@ namespace SportsPro.Models.datalayer
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            /*
+
             modelBuilder.ApplyConfiguration(new CountryConfig());
             modelBuilder.ApplyConfiguration(new CustomerConfig());
             modelBuilder.ApplyConfiguration(new IncidentConfig());
             modelBuilder.ApplyConfiguration(new ProductConfig());
             modelBuilder.ApplyConfiguration(new TechnicianConfig());
             modelBuilder.ApplyConfiguration(new LoginConfig());
-            
             modelBuilder.Entity<Product>().HasData(
                 new Product
                 {
@@ -307,7 +308,7 @@ namespace SportsPro.Models.datalayer
                     DateClosed = null
                 }
             );
-            
+            */
         }
     }
 }
