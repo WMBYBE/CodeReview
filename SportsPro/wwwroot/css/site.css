@@ -29,3 +29,18 @@ body {
   white-space: nowrap;
   line-height: 40px; /* Vertically center the text there */
 }
+
+input:invalid {
+    border: 2px solid red; 
+    background-color: #ffe6e6;
+}
+
+form:invalid {
+    border: 2px solid red;
+    background-color: #ffe6e6;
+}
+
+div:invalid {
+    border: 2px solid red;
+    background-color: #ffe6e6;
+}
