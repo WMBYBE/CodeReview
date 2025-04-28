@@ -6,6 +6,8 @@ namespace SportsPro.Models
 {
     public class Login
     {
+        [Key]
+
         [Required]
         public string Username { get; set; }
 

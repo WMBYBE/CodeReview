@@ -3,7 +3,8 @@
 namespace SportsPro.Models
 {
     public class RegisterViewModel
-    {
+    {   
+
         [Required(ErrorMessage = "Please enter a username.")]
         [StringLength(255)]
         public string Username { get; set; } = string.Empty;

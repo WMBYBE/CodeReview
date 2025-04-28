@@ -1,10 +1,11 @@
 ﻿using System;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace SportsPro.Models.datalayer
 {
-    public class SportsProContext : DbContext
-    {
+    public class SportsProContext : IdentityDbContext<User> 
+        {
         public SportsProContext(DbContextOptions<SportsProContext> options)
             : base(options)
         { }
@@ -17,14 +18,14 @@ namespace SportsPro.Models.datalayer
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new CountryConfig());
             modelBuilder.ApplyConfiguration(new CustomerConfig());
             modelBuilder.ApplyConfiguration(new IncidentConfig());
             modelBuilder.ApplyConfiguration(new ProductConfig());
             modelBuilder.ApplyConfiguration(new TechnicianConfig());
             modelBuilder.ApplyConfiguration(new LoginConfig());
-            /*
+            
             modelBuilder.Entity<Product>().HasData(
                 new Product
                 {
@@ -306,7 +307,7 @@ namespace SportsPro.Models.datalayer
                     DateClosed = null
                 }
             );
-            */
+            
         }
     }
 }

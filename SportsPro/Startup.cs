@@ -7,6 +7,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using SportsPro.Models.datalayer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 using SportsPro.Models;
 
 namespace SportsPro
@@ -35,6 +37,7 @@ namespace SportsPro
 
 
             });
+
 
             services.AddIdentity<User, IdentityRole>(options => {
                 options.Password.RequiredLength = 6;
