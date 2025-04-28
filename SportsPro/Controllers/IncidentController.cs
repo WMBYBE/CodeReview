@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using SportsPro.Models;
@@ -72,8 +73,6 @@ namespace SportsPro.Controllers
                     .OrderBy(c => c.TechnicianID)
                     .ToList();
         }
-        */
-
         [HttpGet]
         [Route("/incidents")]
         public IActionResult List()
@@ -172,8 +171,23 @@ namespace SportsPro.Controllers
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            Incident incidents = incident.Get(id);
-            return View(incidents);
+            var incident = context.Incidents.FirstOrDefault(p => p.IncidentID == id);
+
+            var model = new DeleteConfirmationViewModel
+            {
+                ID = incident.IncidentID,
+                Name = incident.Title
+            };
+            return View(model);
+        }
+
+            [HttpPost]
+        public IActionResult Delete(DeleteConfirmationViewModel model)
+        {
+            var incident = context.Incidents.FirstOrDefault(p => p.IncidentID == model.ID);
+            context.Incidents.Remove(incident);
+            context.SaveChanges();
+            return RedirectToAction("List");
         }
 
         [HttpPost]

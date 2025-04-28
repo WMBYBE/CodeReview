@@ -17,13 +17,16 @@ namespace SportsPro.Models.datalayer
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
-            modelBuilder.ApplyConfiguration(new CountryConfig());
-            modelBuilder.ApplyConfiguration(new CustomerConfig());
-            modelBuilder.ApplyConfiguration(new IncidentConfig());
-            modelBuilder.ApplyConfiguration(new ProductConfig());
-            modelBuilder.ApplyConfiguration(new TechnicianConfig());
-            /*
+            modelBuilder.Entity<CustomerProduct>()
+                .HasKey(cp => new { cp.CustomerID, cp.ProductID });
+            modelBuilder.Entity<CustomerProduct>()
+                .HasOne(cp => cp.Customer)
+                .WithMany(c => c.CustomerProducts)
+                .HasForeignKey(CustomerProduct => CustomerProduct.CustomerID);
+            modelBuilder.Entity<CustomerProduct>()
+                .HasOne(cp => cp.Product)
+                .WithMany(p => p.CustomerProducts)
+                .HasForeignKey(cp => cp.ProductID);
             modelBuilder.Entity<Product>().HasData(
                 new Product
                 {

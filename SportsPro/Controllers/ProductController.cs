@@ -41,7 +41,6 @@ namespace SportsPro.Controllers
             // bind product to AddUpdate view
             return View("AddEdit", product);
         }
-
         [HttpGet]
         public ViewResult Edit(int id)
         {

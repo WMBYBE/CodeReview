@@ -2,13 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SportsPro.Models;
 using System.Linq;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Nodes;
-using SportsPro.Models.datalayer;
-using NuGet.DependencyResolver;
-using System.Security.Claims;
-
 
 namespace SportsPro.Controllers
 {
@@ -20,13 +13,9 @@ namespace SportsPro.Controllers
 
         public CustomerController(SportsProContext ctx) 
         {
-            Customer = new Repository<Customer>(ctx);
-            Country = new Repository<Country>(ctx);
+            Context = ctx;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+     
         [HttpGet]
         [Route("/customers")]
         public IActionResult List()
@@ -42,16 +31,10 @@ namespace SportsPro.Controllers
         [HttpGet]
         public IActionResult Add() 
         {
-            var contOptions = new QueryOptions<Country>
-            {
-                OrderBy = c => c.Name
-            };
-
             ViewBag.Action = "Add";
-            ViewBag.Countries = Country.List(contOptions);
-            Customer c = new Customer();
-            c.CountryID = "United States"; //DO NOT DELETE THIS LITERALLY FIXES EVERYTHING AND I DO NOT KNOW WHY. -Blade
-            return View("Edit", c); 
+            ViewBag.Countries = Context.Countries.OrderBy(c => c.Name).ToList();
+            var customer = new Customer();
+            return View("Edit", customer); 
         }
         [HttpGet]
         public IActionResult Edit(int id)

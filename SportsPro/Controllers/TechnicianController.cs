@@ -15,7 +15,6 @@ namespace SportsPro.Controllers
         { 
             tech = new Repository<Technician>(ctx);
         }
-
         [HttpGet]
         [Route("/technicians")]
         public IActionResult List()
