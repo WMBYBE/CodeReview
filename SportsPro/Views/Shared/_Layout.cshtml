@@ -27,10 +27,7 @@
             <nav class="collapse navbar-collapse" id="navbarSupportedContent">
                 <div class="navbar-nav mr-auto">
                     <a class="nav-item nav-link active" asp-controller="Home" asp-action="Index">Home</a>
-                    @if (SignInManager.IsSignedIn(User))
-                    {
-                        <span>Hi, @UserManager.GetUserName(User)!</span>
-                        <a class="nav-item nav-link active" asp-controller="Account" asp-action="Logout">Log Out</a>
+                    @if (SignInManager.IsSignedIn(User)){
                         <a class="nav-item nav-link active" asp-controller="Product" asp-action="List">Products</a>
                         <a class="nav-item nav-link active" asp-controller="Technician" asp-action="List">Technicians</a>
                         <a class="nav-item nav-link active" asp-controller="Customer" asp-action="List">Customers</a>
@@ -38,12 +35,16 @@
                     }
                     else{ 
                          <a class="nav-item nav-link active" asp-controller="Account" asp-action="Register">Registrations</a> 
-
                          <a class="nav-item nav-link active" asp-controller="Account" asp-action="Login">Log In</a> 
+
                      } 
                 </div>
                 <div class="navbar-nav navbar-right">
-                    <a class="nav-item nav-link active" asp-controller="Home" asp-action="About">About</a>
+                    @if (SignInManager.IsSignedIn(User)){
+                      <span><p class="nav-item nav-link active">Hi, @UserManager.GetUserName(User)!</p></span>
+                        <a class="nav-item nav-link active" asp-controller="Account" asp-action="Logout">Log Out</a>
+                    }
+                        <a class="nav-item nav-link active" asp-controller="Home" asp-action="About">About</a>
                 </div>
             </nav>
         </nav>
