@@ -25,10 +25,15 @@ namespace SportsPro.Controllers
             Customer = new Repository<Customer>(ctx);
             Country = new Repository<Country>(ctx);
         }
+        [Authorize(Roles = "Admin,User")]
+
         public IActionResult Index()
         {
             return View();
         }
+
+        [Authorize(Roles = "Admin,User")]
+
         [HttpGet]
         [Route("/customers")]
         public IActionResult List()

@@ -75,6 +75,7 @@ namespace SportsPro.Controllers
                     .ToList();
         }
         */
+        [Authorize(Roles = "Admin,User")]
 
         [HttpGet]
         [Route("/incidents")]

@@ -17,7 +17,7 @@ namespace SportsPro.Controllers
         { 
             tech = new Repository<Technician>(ctx);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,User")]
 
         [HttpGet]
         [Route("/technicians")]

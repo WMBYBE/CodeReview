@@ -20,6 +20,7 @@ namespace SportsPro.Controllers
         }
 
 
+        [Authorize(Roles = "Admin,User")]
 
         public ViewResult List()
         {

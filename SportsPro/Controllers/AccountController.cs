@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using SportsPro.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
+using System.Linq;
 
 namespace SportsPro.Controllers
 {
@@ -10,12 +11,16 @@ namespace SportsPro.Controllers
     {
         private Microsoft.AspNetCore.Identity.UserManager<User> userManager;
         private SignInManager<User> signInManager;
+        private  Microsoft.AspNetCore.Identity.RoleManager<IdentityRole> roleManager ;
+
 
         public AccountController(Microsoft.AspNetCore.Identity.UserManager<User> userMngr,
-            SignInManager<User> signInMngr)
-        {
+                                SignInManager<User> signInMngr, Microsoft.AspNetCore.Identity.RoleManager<IdentityRole> RoleMngr )
+            {
             userManager = userMngr;
             signInManager = signInMngr;
+            roleManager = RoleMngr;
+
         }
 
         [HttpGet]
@@ -80,6 +85,20 @@ namespace SportsPro.Controllers
 
                 if (result.Succeeded)
                 {
+                    var user = await userManager.FindByNameAsync(model.Username);
+
+                    const string defaultRole = "User";
+                    if (!await roleManager.RoleExistsAsync(defaultRole))
+                    {
+                        await roleManager.CreateAsync(new IdentityRole(defaultRole));
+                    }
+
+                    var roles = await userManager.GetRolesAsync(user);
+
+                    if (!roles.Any() || (!roles.Contains("Admin") && !roles.Contains(defaultRole)))
+                    {
+                        await userManager.AddToRoleAsync(user, defaultRole);
+                    }
                     if (!string.IsNullOrEmpty(model.ReturnUrl) &&
                         Url.IsLocalUrl(model.ReturnUrl))
                     {
