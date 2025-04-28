@@ -2,68 +2,39 @@
 using Microsoft.AspNetCore.Mvc;
 using SportsPro.Models;
 using System.Linq;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Nodes;
-using SportsPro.Models.datalayer;
-using NuGet.DependencyResolver;
-using System.Security.Claims;
-
 
 namespace SportsPro.Controllers
 {
     public class CustomerController : Controller
     {
-        //private SportsProContext Context {  get; set; }
-        private Repository<Customer> Customer { get; set; }
-        private Repository<Country> Country { get; set; }
+        private SportsProContext Context {  get; set; }
 
         public CustomerController(SportsProContext ctx) 
         {
-            Customer = new Repository<Customer>(ctx);
-            Country = new Repository<Country>(ctx);
+            Context = ctx;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+     
         [HttpGet]
         [Route("/customers")]
         public IActionResult List()
         {
-            var custOptions = new QueryOptions<Customer>
-            {
-                OrderBy = d => d.CustomerID
-            };
-
-            var customers = Customer.List(custOptions);
+            var customers = Context.Customers.ToList();
             return View(customers);
         }
         [HttpGet]
         public IActionResult Add() 
         {
-            var contOptions = new QueryOptions<Country>
-            {
-                OrderBy = c => c.Name
-            };
-
             ViewBag.Action = "Add";
-            ViewBag.Countries = Country.List(contOptions);
-            Customer c = new Customer();
-            c.CountryID = "United States"; //DO NOT DELETE THIS LITERALLY FIXES EVERYTHING AND I DO NOT KNOW WHY. -Blade
-            return View("Edit", c); 
+            ViewBag.Countries = Context.Countries.OrderBy(c => c.Name).ToList();
+            var customer = new Customer();
+            return View("Edit", customer); 
         }
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var contOptions = new QueryOptions<Country>
-            {
-                OrderBy = c => c.Name
-            };
-
             ViewBag.Action = "Edit";
-            var customer = Customer.Get(id);
-            ViewBag.Countries = Country.List(contOptions);
+            var customer = Context.Customers.Find(id);
+            ViewBag.Countries = Context.Countries.OrderBy(c => c.Name).ToList();
             return View(customer);
         }
         [HttpPost]
@@ -73,24 +44,19 @@ namespace SportsPro.Controllers
             {
                 if (customer.CustomerID == 0)
                 {
-                    Customer.Insert(customer);
+                    Context.Customers.Add(customer);
                 }
                 else
                 {
-                    Customer.Update(customer);
+                    Context.Customers.Update(customer);
                 }
-                Customer.Save();
+                Context.SaveChanges();
                 return RedirectToAction("List");
             }
             else
             {
-                var contOptions = new QueryOptions<Country>
-                {
-                    OrderBy = c => c.Name
-                };
-
                 ViewBag.Action = (customer.CustomerID == 0) ? "Add" : "Edit";
-                ViewBag.Countries = Country.List(contOptions);
+                ViewBag.Countries = Context.Countries.OrderBy(c => c.Name).ToList();
                 return View(customer);
             }
 
@@ -98,38 +64,24 @@ namespace SportsPro.Controllers
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            ViewBag.Action = "Delete";
-            var customer = Customer.Get(id);
-            return View(customer);
+            var customer = Context.Customers.Find(id);
+
+            var model = new DeleteConfirmationViewModel
+            {
+                ID = customer.CustomerID,
+                Name = customer.FullName
+            };
+            return View(model);
         }
 
         [HttpPost]
-        public IActionResult Delete(Customer customer)
+        public IActionResult Delete(DeleteConfirmationViewModel model)
         {
-            var custOptions = new QueryOptions<Customer>
-            {
-                OrderBy = d => d.CustomerID
-            };
-            Customer.Delete(customer);
-            Customer.Save();
-
-            var customers = Customer.List(custOptions);
-            return View("list", customers);
-        }
-
-        
-        public JsonResult CheckEmail(string email)
-        {
-            var custOptions = new QueryOptions<Customer>
-            {
-                Where = c => c.Email == email
-            };
-
-            var hasEmail = Customer.Get(custOptions);
-            if (hasEmail is null)
-                return Json(true);
-            else
-                return Json($"Email address {email} is already registered.");
+            var customer = Context.Customers.Find(model.ID);
+            Context.Customers.Remove(customer);
+            Context.SaveChanges();
+ 
+            return View("list");
         }
     }
 }

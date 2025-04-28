@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SportsPro.Migrations
 {
-    public partial class Initial : Migration
+    public partial class Jointable : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -76,6 +76,31 @@ namespace SportsPro.Migrations
                         column: x => x.CountryID,
                         principalTable: "Countries",
                         principalColumn: "CountryID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CustomerProducts",
+                columns: table => new
+                {
+                    CustomerID = table.Column<int>(type: "int", nullable: false),
+                    ProductID = table.Column<int>(type: "int", nullable: false),
+                    RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CustomerProducts", x => new { x.CustomerID, x.ProductID });
+                    table.ForeignKey(
+                        name: "FK_CustomerProducts_Customers_CustomerID",
+                        column: x => x.CustomerID,
+                        principalTable: "Customers",
+                        principalColumn: "CustomerID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CustomerProducts_Products_ProductID",
+                        column: x => x.ProductID,
+                        principalTable: "Products",
+                        principalColumn: "ProductID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -221,6 +246,11 @@ namespace SportsPro.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_CustomerProducts_ProductID",
+                table: "CustomerProducts",
+                column: "ProductID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Customers_CountryID",
                 table: "Customers",
                 column: "CountryID");
@@ -243,6 +273,9 @@ namespace SportsPro.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "CustomerProducts");
+
             migrationBuilder.DropTable(
                 name: "Incidents");
 

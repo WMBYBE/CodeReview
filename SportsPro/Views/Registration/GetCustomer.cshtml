@@ -1,0 +1,28 @@
+﻿@model CustomerProduct
+@using Microsoft.AspNetCore.Http
+@{
+    var customers = ViewBag.Customers as List<Customer>;
+}
+
+@await Html.PartialAsync("_ValidationScriptspartial")
+
+@* test *@
+<h2>Get Customers</h2>
+
+<form asp-action="SelectCustomer" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <select name="CustomerID" class="form-control">
+            <option value=""> Choose a Customer</option>
+            @foreach (var customer in customers)
+            {
+                <option value="@customer.CustomerID">@customer.FullName</option>
+            }
+                
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Select</button>
+    <a asp-area="" asp-controller="Registration" asp-action="Index" class="btn btn-primary">Cancel</a>
+</form>
