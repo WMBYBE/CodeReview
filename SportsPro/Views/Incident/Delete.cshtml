@@ -1,14 +1,14 @@
-﻿@model DeleteConfirmationViewModel
+﻿@model Incident
 @{
     ViewBag.Title = "Delete Incident";
 }
 
-<h2>Confirm Deletion</h2>
-<h3>@Model.Name</h3>
+<h1>Confirm Deletion</h1>
+<h3>@Model.Title</h3>
 
 <form asp-action="Delete" method="post">
-    <input type="hidden" name="Id" value="@Model.ID" />
+    <input type="hidden" asp-for="IncidentID" />
 
     <button type="submit" class="btn btn-primary">Delete</button>
-    <a asp-controller="Customer" asp-action="List" class="btn btn-primary">Cancel</a>
+    <a asp-action="List" class="btn btn-primary">Cancel</a>
 </form>

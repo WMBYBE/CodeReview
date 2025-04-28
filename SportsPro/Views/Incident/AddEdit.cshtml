@@ -6,24 +6,33 @@
     ViewBag.Title = title;
     Layout = "_Layout";
 }
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
 <h2>@title</h2>
-
-@await Html.PartialAsync("_ValidationScriptspartial")
 
 <form asp-action="Edit" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>
 
     <div class="form-group">
         <label asp-for="Incident.CustomerID">Customer</label>
-        <customer-select asp-for="Incident.CustomerID"
-                selected-customer-id="@Model.Incident.CustomerID">
-        </customer-select>
+        <select asp-for="Incident.CustomerID"
+                asp-items="@(new SelectList(Model.Customers,
+                    "CustomerID", "FullName",
+                    Model.Incident.CustomerID.ToString()))"
+                    class="form-control">
+        <option value="">Select a Customer...</option>
+        </select>
     </div>
     <div class="form-group">
         <label asp-for="Incident.ProductID">Product</label>
-        <product-select asp-for="Incident.ProductID" 
-        select-product-id="@Model.Incident.ProductID"></product-select>
+        <select asp-for="Incident.ProductID"
+                asp-items="@(new SelectList(Model.Products,
+                    "ProductID", "Name",
+                    Model.Incident.ProductID.ToString()))"
+                class="form-control">
+            <option value="">Select a Product...</option>
+        </select>
     </div>
 
     <div class="form-group">
@@ -37,8 +46,13 @@
     </div>
     <div class="form-group">
         <label asp-for="Incident.TechnicianID">Technician</label>
-        <technician-select asp-for="Incident.TechnicianID"
-                        select-technician-id="@Model.Incident.TechnicianID"></technician-select>
+        <select asp-for="Incident.TechnicianID"
+                asp-items="@(new SelectList(Model.Technicians,
+                    "TechnicianID", "Name",
+                    Model.Incident.TechnicianID.ToString()))"
+                class="form-control">
+            <option value="">Select a Technician...</option>
+        </select>
     </div>
     <div class="form-group">
         <label asp-for="Incident.DateOpened">Date Opened</label>
@@ -55,12 +69,5 @@
     <input type="hidden" asp-for="Incident.IncidentID" />
 
     <button type="submit" class="btn btn-primary">@Model.Mode</button>
-    @if (Context.Session.GetInt32("TechnicianID").HasValue)
-    {
-        <a asp-area="" asp-controller="Incident" asp-action="ListByTech" asp-route-id="@Context.Session.GetInt32("TechnicianID")" class="btn btn-primary">Cancel</a>
-
-    }else
-    {
-        <a asp-area="" asp-controller="Incident" asp-action="List" class="btn btn-primary">Cancel</a>
-    }
+    <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">Cancel</a>
 </form>

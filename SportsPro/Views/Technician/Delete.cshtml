@@ -1,14 +1,15 @@
-﻿@model DeleteConfirmationViewModel
+﻿@model Technician
 @{
-    ViewBag.Title = "Delete Technician";
+    ViewData["Title"] = "Confirm Delete";
 }
 
-<h2>Confirm Deletion</h2>
-<h3>@Model.Name</h3>
+<h1 class="heading text-center">Confirm Delete</h1>
 
-<form asp-action="Delete" method="post">
-    <input type="hidden" name="Id" value="@Model.ID" />
+<form asp-action="Delete" method="post" class="col-md-4 offset-md-4 wooden-form p-5">
+    <p>Are you sure you want to delete @Model!.Name?</p>
 
-    <button type="submit" class="btn btn-primary">Delete</button>
-    <a asp-controller="Customer" asp-action="List" class="btn btn-primary">Cancel</a>
+    <div class="text-center">
+        <input type="submit" value="Yes" class="button d-inline-block p-3" />
+        <a asp-controller="Technician" asp-action="List" class="button d-inline-block p-3 ms-2">No</a>
+    </div>
 </form>
