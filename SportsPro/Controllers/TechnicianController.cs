@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SportsPro.Models;
+using SportsPro.Models.datalayer;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -8,21 +9,30 @@ namespace SportsPro.Controllers
 {
     public class TechnicianController : Controller
     {
-        private SportsProContext _context;
-        public TechnicianController(SportsProContext context)
-        {
-            _context = context;
+        private Repository<Technician> tech { get; set; }
+
+        public TechnicianController(SportsProContext ctx)
+        { 
+            tech = new Repository<Technician>(ctx);
         }
+
         [HttpGet]
         [Route("/technicians")]
         public IActionResult List()
         {
-            var techs = _context.Technicians.ToList();
+            var techOptions = new QueryOptions<Technician>
+            {
+                OrderBy = d => d.TechnicianID
+            };
+
+            var techs = tech.List(techOptions);
             return View(techs);
         }
 
 
-        [NonAction]
+        /*      What does this do??? Is it necessary and part of the app?
+         * 
+         * [NonAction]
 
         // in NET 3.0 you can't use  _context.ChangeTracker.Clear(); 
         // so this is a solution that works with older verions
@@ -32,7 +42,7 @@ namespace SportsPro.Controllers
             {
                 entry.State = EntityState.Detached;
             }
-        }
+        }*/
 
         [NonAction]
         public bool IsValidEmail(string email)
@@ -52,12 +62,20 @@ namespace SportsPro.Controllers
         private void ValidateTechEditViewModel(TechEditViewModel model)
         {
             // Ensure the tech name is unique
-            var tech = _context.Technicians
+            /*
+            var techs = tech
                 .Where(t => t.TechnicianID != model.Technician!.TechnicianID && t.Name == model.Technician.Name)
                 .FirstOrDefault();
-      
+            */
 
-            if (tech != null)
+            var techOptions = new QueryOptions<Technician>
+            {
+                Where = t => t.TechnicianID != model.Technician!.TechnicianID && t.Name == model.Technician.Name
+            };
+
+            var techs2 = tech.List(techOptions);
+
+            if (techs2 != null)
             {
                 ModelState.AddModelError("Character.Name", "You already have a character with that name.");
             }
@@ -104,8 +122,8 @@ namespace SportsPro.Controllers
 
             // Add the tech
 
-            _context.Add(model.Technician);
-            _context.SaveChanges();
+            tech.Insert(model.Technician);
+            tech.Save();
 
             // Redirect to the tech manager page
             TempData["message"] = $"You just added the team {model.Technician.Name}.";
@@ -124,9 +142,13 @@ namespace SportsPro.Controllers
 
 
             // Ensure the team exists and is owned by the user
+            /*
             model.Technician = _context.Technicians
                 .Where(t => t.TechnicianID == id)
                 .FirstOrDefault();
+            */
+
+            model.Technician = tech.Get(id);
 
             if (model.Technician == null)
             {
@@ -142,19 +164,24 @@ namespace SportsPro.Controllers
 
 
             // Ensure the tech exists and is owned by the user
-            var tech = _context.Technicians
+            /*
+            var techs = _context.Technicians
                 .Where(t => t.TechnicianID == id)
                 .FirstOrDefault();
-            ClearChangeTracker();
+            */
 
-            if (tech == null)
+            var techs2 = tech.Get(id);
+
+            //ClearChangeTracker();
+
+            if (techs2 == null)
             {
                 return NotFound();
             }
 
             // Set the appropriate tech properties and validate the tech
-            model.Technician!.TechnicianID = tech.TechnicianID;
-            model.Technician.Name = tech.Name;
+            model.Technician!.TechnicianID = techs2.TechnicianID;
+            model.Technician.Name = techs2.Name;
 
             ValidateTechEditViewModel(model);
 
@@ -167,8 +194,8 @@ namespace SportsPro.Controllers
             }
 
             // Update the team
-            _context.Update(model.Technician);
-            _context.SaveChanges();
+            tech.Update(model.Technician);
+            tech.Save();
 
             // Redirect to the user's teams page
             TempData["message"] = $"You just edited the team {model.Technician.Name}.";
@@ -180,6 +207,8 @@ namespace SportsPro.Controllers
             var technician = _context.Technicians
                 .Where(c => c.TechnicianID == id)
                 .FirstOrDefault();
+            */
+            var model2 = tech.Get(id);
 
             var model = new DeleteConfirmationViewModel
             {
@@ -195,6 +224,8 @@ namespace SportsPro.Controllers
             var technician = _context.Technicians
                 .Where(c => c.TechnicianID == model.ID)
                 .FirstOrDefault();
+            */
+            var Technician2 = tech.Get(id);
 
             _context.Technicians.Remove(technician);
             _context.SaveChanges();
