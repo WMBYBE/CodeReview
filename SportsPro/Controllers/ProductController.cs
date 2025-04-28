@@ -65,17 +65,22 @@ namespace SportsPro.Controllers
             }
         }
         [HttpGet]
-
-        public ViewResult Delete(int id)
+        public IActionResult Delete(int id)
         {
-            Product product = context.Products.FirstOrDefault(p => p.ProductID == id);
-            return View(product);
+            var product = context.Products.FirstOrDefault(p => p.ProductID == id);
+
+            var model = new DeleteConfirmationViewModel
+            {
+                ID = product.ProductID,
+                Name = product.Name
+            };
+            return View(model);
         }
-        [HttpPost]
 
-        public RedirectToActionResult Delete(Product product)
+        [HttpPost]
+        public RedirectToActionResult Delete(DeleteConfirmationViewModel model)
         {
-            TempData["delete"] = product.Name + " has been deleted";
+            var product = context.Products.FirstOrDefault(p => p.ProductID == model.ID);
             context.Products.Remove(product);
             context.SaveChanges();
             return RedirectToAction("List");
