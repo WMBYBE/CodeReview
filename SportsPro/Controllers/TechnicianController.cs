@@ -17,10 +17,11 @@ namespace SportsPro.Controllers
         { 
             tech = new Repository<Technician>(ctx);
         }
-        [Authorize(Roles = "Admin,User")]
+        [Authorize(Roles = "Admin")]
 
         [HttpGet]
         [Route("/technicians")]
+
         public IActionResult List()
         {
             var techOptions = new QueryOptions<Technician>

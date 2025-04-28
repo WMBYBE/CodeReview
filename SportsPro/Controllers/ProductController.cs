@@ -8,6 +8,7 @@ using System.Security.Claims;
 
 namespace SportsPro.Controllers
 {
+    [Authorize(Roles = "Admin")]
 
     public class ProductController : Controller
     {
@@ -20,7 +21,6 @@ namespace SportsPro.Controllers
         }
 
 
-        [Authorize(Roles = "Admin,User")]
 
         public ViewResult List()
         {

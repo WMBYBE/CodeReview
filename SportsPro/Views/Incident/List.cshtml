@@ -22,12 +22,16 @@
                 <td>
                     @incident.DateOpened
                 </td>
+                @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
+                {                
                 <td>
                     <a asp-controller="Incident" asp-action="Edit" asp-route-id="@incident.IncidentID" class="btn btn-primary">Edit</a>
                 </td>
                 <td>
                     <a asp-controller="Incident" asp-action="Delete" asp-route-id="@incident.IncidentID" type="button" class="btn btn-primary">Delete</a>
                 </td>
+                }
+
             </tr>
         }
     </tbody>

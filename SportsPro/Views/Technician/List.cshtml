@@ -25,13 +25,17 @@
                 <td>@tech.Name</td>
                 <td>@tech.Email</td>
                 <td>@tech.Phone</td>
+                @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
+                {
                 <td>
                     <a asp-controller="Technician" asp-action="Edit" asp-route-id="@tech.TechnicianID"
                        class="btn btn-primary">Edit</a>
         
                     <a asp-controller="Technician" asp-action="Delete" asp-route-id="@tech.TechnicianID"
                        class="btn btn-primary ml-3">Delete</a>
-                </td>
+                </td>                    
+                }
+
 
             </tr>
         }

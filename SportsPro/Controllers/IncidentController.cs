@@ -114,7 +114,7 @@ namespace SportsPro.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,User")]
 
         [HttpGet]
         public IActionResult Add()
@@ -135,7 +135,7 @@ namespace SportsPro.Controllers
             return View("AddEdit", model);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,User")]
 
         [HttpGet]
         public IActionResult Edit(int id)
@@ -152,7 +152,7 @@ namespace SportsPro.Controllers
             return View("AddEdit", model);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,User")]
 
         [HttpPost]
         public IActionResult Edit(IncidentEditViewModel incidents)
