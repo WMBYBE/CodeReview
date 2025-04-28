@@ -1,34 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using SportsPro.Models;
-using SportsPro.Models.datalayer;
 using System.Linq;
-using System.Security.Claims;
 
 namespace SportsPro.Controllers
 {
     public class ProductController : Controller
     {
-
-        private Repository<Product> produt { get; set; }
+        private SportsProContext context { get; set; }
 
         public ProductController(SportsProContext ctx)
         {
-            produt = new Repository<Product>(ctx); 
+            context = ctx;
         }
-
-
-
         public ViewResult List()
         {
-            var prodOptions = new QueryOptions<Product>
-            {
-                OrderBy = d => d.ReleaseDate
-            };
-
-            //prodOptions.OrderBy = c => c.ReleaseDate;
-            var list = produt.List(prodOptions);
-            return View(list);
+            var products = context.Products.OrderBy(c => c.ReleaseDate).ToList();
+            return View(products);
         }
 
         [HttpGet]
@@ -41,12 +29,11 @@ namespace SportsPro.Controllers
             // bind product to AddUpdate view
             return View("AddEdit", product);
         }
-
         [HttpGet]
+
         public ViewResult Edit(int id)
         {
-            Product product = produt.Get(id);
-
+            Product product = context.Products.FirstOrDefault(p => p.ProductID == id);
             ViewBag.Action = "Edit";
 
             return View("AddEdit", product);
@@ -59,25 +46,18 @@ namespace SportsPro.Controllers
             {
                 if (product.ProductID == 0)
                 {
-
                     TempData["add"] = product.Name + " has been added";
-                    produt.Insert(product);
+                    context.Products.Add(product);
                 }
                 else
                 {
                     TempData["updated"] = product.Name + " has been updated";
-                    produt.Update(product);
+                    context.Products.Update(product);
                 }
 
-                var prodOptions = new QueryOptions<Product>
-                {
-                    OrderBy = d => d.ReleaseDate
-                };
-
-                produt.List(prodOptions);
-
-                produt.Save();
-                return RedirectToAction("List", prodOptions);
+                var products = context.Products.OrderBy(c => c.ReleaseDate).ToList();
+                context.SaveChanges();
+                return RedirectToAction("List", products);
             }
             else
             {
