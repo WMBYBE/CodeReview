@@ -31,9 +31,13 @@
                     <a class="nav-item nav-link active" asp-controller="Technician" asp-action="List">Technicians</a>
                     <a class="nav-item nav-link active" asp-controller="Customer" asp-action="List">Customers</a>
                     <a class="nav-item nav-link active" asp-controller="Incident" asp-action="List">Incidents</a>
-                    @if (SignInManager.IsSignedIn(User)){ 
-                       <span>Hi, @UserManager.GetUserName(User)!</span> 
-                    } else{ 
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <span>Hi, @UserManager.GetUserName(User)!</span>
+                        <a class="nav-item nav-link active" asp-controller="Account" asp-action="Logout">Log Out</a>
+
+                    }
+                    else{ 
                          <a class="nav-item nav-link active" asp-controller="Account" asp-action="Register">Registrations</a> 
 
                          <a class="nav-item nav-link active" asp-controller="Account" asp-action="Login">Log In</a> 

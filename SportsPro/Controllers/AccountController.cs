@@ -53,7 +53,7 @@ namespace SportsPro.Controllers
             return View(model);
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> LogOut()
         {
             await signInManager.SignOutAsync();

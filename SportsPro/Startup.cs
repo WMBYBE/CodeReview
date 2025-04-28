@@ -64,6 +64,7 @@ namespace SportsPro
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseAuthentication();  
 
             app.UseAuthorization();
 
