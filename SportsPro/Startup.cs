@@ -5,8 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Microsoft.EntityFrameworkCore;
+using SportsPro.Models.datalayer;
+using Microsoft.AspNetCore.Identity;
 using SportsPro.Models;
-using System;
 
 namespace SportsPro
 {
@@ -22,12 +23,7 @@ namespace SportsPro
         // Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
-            services.AddHttpContextAccessor();
-
             services.AddControllersWithViews();
-            services.AddMemoryCache();
-            services.AddSession();
 
             services.AddDbContext<SportsProContext>(options =>
                 options.UseSqlServer(
@@ -36,17 +32,16 @@ namespace SportsPro
             services.AddRouting(options => {
                 options.LowercaseUrls = true;
                 options.AppendTrailingSlash = true;
+
+
             });
 
-            services.AddDistributedMemoryCache();
-
-
-            services.AddSession(options =>
-            {
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
-                options.Cookie.HttpOnly = false;
-                options.Cookie.IsEssential = true;
-            });
+            services.AddIdentity<User, IdentityRole>(options => {
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false;
+            }).AddEntityFrameworkStores<SportsProContext>()
+            .AddDefaultTokenProviders();
         }
 
         // Use this method to configure the HTTP request pipeline.
@@ -65,14 +60,9 @@ namespace SportsPro
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            
-           
-
             app.UseRouting();
 
             app.UseAuthorization();
-
-            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
@@ -80,8 +70,6 @@ namespace SportsPro
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}/");
             });
-  
-
         }
     }
 }

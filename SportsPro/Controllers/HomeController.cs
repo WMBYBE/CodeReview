@@ -9,8 +9,6 @@ namespace SportsPro.Controllers
     {
         public IActionResult Index()
         {
-            HttpContext.Session.Remove("TechIncidentID");
-
             return View();
         }
 
