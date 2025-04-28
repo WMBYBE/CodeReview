@@ -5,11 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Microsoft.EntityFrameworkCore;
-using SportsPro.Models.datalayer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-
 using SportsPro.Models;
+using System;
 
 namespace SportsPro
 {
@@ -37,19 +34,17 @@ namespace SportsPro
             services.AddRouting(options => {
                 options.LowercaseUrls = true;
                 options.AppendTrailingSlash = true;
-
-
             });
 
             services.AddDistributedMemoryCache();
             services.AddHttpContextAccessor();
-            
-            services.AddIdentity<User, IdentityRole>(options => {
-                options.Password.RequiredLength = 6;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireDigit = false;
-            }).AddEntityFrameworkStores<SportsProContext>()
-            .AddDefaultTokenProviders();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = false;
+                options.Cookie.IsEssential = true;
+            });
         }
 
         // Use this method to configure the HTTP request pipeline.
@@ -69,7 +64,6 @@ namespace SportsPro
             app.UseStaticFiles();
 
             app.UseRouting();
-            app.UseAuthentication();  
 
             app.UseAuthorization();
 

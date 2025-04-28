@@ -1,11 +1,10 @@
 ﻿using System;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace SportsPro.Models
 {
-    public class SportsProContext : IdentityDbContext<User> 
-        {
+    public class SportsProContext : DbContext
+    {
         public SportsProContext(DbContextOptions<SportsProContext> options)
             : base(options)
         { }
@@ -19,8 +18,6 @@ namespace SportsPro.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
             modelBuilder.Entity<CustomerProduct>()
                 .HasKey(cp => new { cp.CustomerID, cp.ProductID });
             modelBuilder.Entity<CustomerProduct>()
@@ -31,14 +28,6 @@ namespace SportsPro.Models
                 .HasOne(cp => cp.Product)
                 .WithMany(p => p.CustomerProducts)
                 .HasForeignKey(cp => cp.ProductID);
-            /*
-
-            modelBuilder.ApplyConfiguration(new CountryConfig());
-            modelBuilder.ApplyConfiguration(new CustomerConfig());
-            modelBuilder.ApplyConfiguration(new IncidentConfig());
-            modelBuilder.ApplyConfiguration(new ProductConfig());
-            modelBuilder.ApplyConfiguration(new TechnicianConfig());
-            modelBuilder.ApplyConfiguration(new LoginConfig());
             modelBuilder.Entity<Product>().HasData(
                 new Product
                 {
