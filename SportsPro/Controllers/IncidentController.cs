@@ -162,15 +162,21 @@ namespace SportsPro.Controllers
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            Incident incidents = context.Incidents
-                .FirstOrDefault(p => p.IncidentID == id);
-            return View(incidents);
+            var incident = context.Incidents.FirstOrDefault(p => p.IncidentID == id);
+
+            var model = new DeleteConfirmationViewModel
+            {
+                ID = incident.IncidentID,
+                Name = incident.Title
+            };
+            return View(model);
         }
 
-        [HttpPost]
-        public IActionResult Delete(Incident incidents)
+            [HttpPost]
+        public IActionResult Delete(DeleteConfirmationViewModel model)
         {
-            context.Incidents.Remove(incidents);
+            var incident = context.Incidents.FirstOrDefault(p => p.IncidentID == model.ID);
+            context.Incidents.Remove(incident);
             context.SaveChanges();
             return RedirectToAction("List");
         }

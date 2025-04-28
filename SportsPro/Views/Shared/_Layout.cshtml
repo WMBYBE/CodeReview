@@ -43,7 +43,7 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">&copy; @DateTime.Now.Year - SportsPro</div>
+        @await Component.InvokeAsync("Copyright")
     </footer>
 </body>
 </html>
